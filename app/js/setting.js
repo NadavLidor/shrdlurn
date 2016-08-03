@@ -35,8 +35,15 @@ export default class Setting {
   }
 
   renderCanvas(state) {
-    this.renderGrid(this.iso);
-    this.renderBlocks(this.iso, state);
+
+    console.log("state: ");
+    console.log(state);
+
+    // TODO nadav
+    this.renderCalendar(state);
+
+    // this.renderGrid(this.iso);
+    // this.renderBlocks(this.iso, state);
   }
 
   renderUserCanvas(state, elemId) {
@@ -99,6 +106,25 @@ export default class Setting {
     }
   }
 
+  renderCalendar(state) {
+
+    // remove all events
+    $('#mycalendar').fullCalendar('removeEvents')
+
+    // add new events
+    $('#mycalendar').fullCalendar('addEventSource', state.map((e) => (
+      {
+        id: e.id,
+        title: e.title,
+        start: e.start,
+        end: e.end,
+        location : e.location,
+        // dow: [2],
+      }
+    )))
+      
+  }
+
   renderBlocks(iso, state, scalingFactor = 1, translateFactor = 0) {
     const blocks = this.sortBlocks(state.map((b) => {
       let x = b.x;
@@ -129,7 +155,6 @@ export default class Setting {
 
     const selected = blocks.filter((b) => b.names && b.names.includes("S"));
     for (const block of blocks) {
-      console.log(block);
       const color = configs.colorMap[block.color];
       let blockColor = new Color();
       if (block.names && block.names.includes("_new")) {

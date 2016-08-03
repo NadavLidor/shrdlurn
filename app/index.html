@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="teach the computer English">
     <title>SHRDLURN</title>
+
+    <!-- calendar stuff -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.14.1/moment.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/fullcalendar/2.9.1/fullcalendar.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
   </head>
   <body>
     <div class="header">
@@ -21,6 +28,7 @@
     </div>
     <div class="container">
       <div class="main">
+        <div id="calendar"></div>
         <div id="define_prompt" class="canvas-prompt hidden">
           <h1>SHRDLURN does not understand.</h1>
           <hr>
@@ -230,5 +238,22 @@
     ga('create', 'UA-74509910-1', 'auto');
     ga('send', 'pageview');
     </script>
+  <div id="mycalendar"></div>
+  <div id="eventDialog">
+    <form>
+      <h1>Add/Edit Event:</h1>
+      <input type="hidden" id="eventId">
+      <input type="text" id="eventTitle" placeholder="Title">
+      <input type="text" id="eventLocation" placeholder="Location">
+      <input type="text" id="eventStart" data-field="datetime" placeholder="Location">
+      <input type="text" id="eventEnd" data-field="datetime" placeholder="Location">
+    </form>
+    <button type="button" class="enter-button" id="updateEvent">update event</button>
+    <button type="button" class="enter-button" id="createEvent">create new event</button>
+    
+
+  </div>
+  <button type="button" class="enter-button" id="submitCalendar">submit</button>
   </body>
+
 </html>

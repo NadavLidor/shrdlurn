@@ -43,22 +43,49 @@ export default class SempreClient {
     return str;
   }
 
+
   formatValue(value) {
     if (typeof value === "undefined") return "";
-    // "[[5,5,1,\"Blue\",[]],[5,5,2,\"Red\",[]],[5,4,2,\"Green\",[]]]"
+
+    console.log(value);
+
     const valueArray = JSON.parse(value);
 
-    // const valueArray = [[1, 1, 0, "Red", []], [1, 1, 1, "Orange", []]];
+    // const valueArray = [["Title","Location","2016-08-03T10:15:00","2016-08-03T11:15:00",[false,false,false,false,false,false,false,false,false],[]],
+    // ["Title2","Location2","2016-08-03T10:15:00","2016-08-03T11:15:00",[false,false,false,false,false,false,false,false,false],[]]];
 
-    return valueArray.map((c) => (
+    return valueArray.map((c, idx) => (
       {
-        x: c[0],
-        y: c[1],
-        z: c[2],
-        color: c[3],
-        names: c[4],
+        id: idx,
+        title: c[0],
+        location: c[1],
+        start: new Date(c[2]),
+        end: new Date(c[3]),
+        repeats: c[4],
+        names: c[5],
       }
     ));
+
+///////
+
+  // formatValue(value) {
+  //   if (typeof value === "undefined") return "";
+  //   // "[[5,5,1,\"Blue\",[]],[5,5,2,\"Red\",[]],[5,4,2,\"Green\",[]]]"
+  //   const valueArray = JSON.parse(value);
+
+  //   // const valueArray = [[1, 1, 0, "Red", []], [1, 1, 1, "Orange", []]];
+
+  //   return valueArray.map((c) => (
+  //     {
+  //       x: c[0],
+  //       y: c[1],
+  //       z: c[2],
+  //       color: c[3],
+  //       names: c[4],
+  //     }
+  //   ));
+
+///////
 
     // const head = value[0];
     // let str = "";

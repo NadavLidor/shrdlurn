@@ -73,6 +73,8 @@
     "eslint-plugin-react": "^5.2.2",
     "extract-text-webpack-plugin": "^2.0.0-beta.3",
     "file-loader": "^0.9.0",
+    "handlebars": "^4.0.5",
+    "handlebars-loader": "^1.3.0",
     "html-loader": "^0.4.3",
     "html-webpack-plugin": "^2.21.0",
     "json-loader": "^0.5.4",
@@ -86,8 +88,13 @@
   },
   "dependencies": {
     "awesomplete": "^1.1.0",
+    "fullcalendar": "^2.9.1",
     "isomer": "^0.2.6",
+    "lodash": "^3.10.1",
+    "material-datetime-picker": "^1.0.1",
+    "pikaday-time": "^1.4.1",
     "sanitize.css": "^4.1.0",
+    "script-loader": "^0.7.0",
     "socket.io-client": "^1.4.8",
     "whatwg-fetch": "^1.0.0"
   }

@@ -149,7 +149,7 @@ export default class Game {
     /* Update the canvas */
     let afterStruct = this.currentState;
     if (this.responses.length > 0) {
-      afterStruct = this.Setting.computeDiff(this.currentState, this.responses[this.selectedResp].value);
+      afterStruct = this.responses[this.selectedResp].value;
     }
     this.Setting.renderCanvas(afterStruct);
 

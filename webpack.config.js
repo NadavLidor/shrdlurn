@@ -44,7 +44,10 @@ const config = module.exports = {
       }, {
         test: /\.json$/,
         loader: "json-loader",
-      },
+      }, {
+        test: /\.hbs$/,
+        loader: "handlebars-loader",
+      }
     ],
   },
 

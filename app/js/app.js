@@ -6,6 +6,8 @@ import Setting from "./setting";
 import Sempre from "./sempre";
 import { getHistoryElems, resetStore } from "./util";
 
+import Pikaday from "pikaday-time";
+
 class App {
   constructor() {
     this.Sempre = new Sempre();
@@ -21,6 +23,7 @@ class App {
     this.structuresOn = false;
     this.watchOutForDefine = false;
     this.submitOn = false;
+    this.eventToUpdate = null;
 
     this.updateRandomUtterances();
 
@@ -33,6 +36,60 @@ class App {
     /* Generate Target at Random */
     this.Game.setTarget(this.Game.getRandomTarget());
     this.setupAutocomplete();
+  }
+
+  submitCalendar() {
+    console.log('testing');
+    //update currentState
+  }
+
+  updateEvent() {
+    console.log('updating event');
+    this.eventToUpdate.title = document.getElementById("eventTitle").value;
+    this.eventToUpdate.location = document.getElementById("eventLocation").value;
+    this.eventToUpdate.start = document.getElementById("eventStart").value;
+    this.eventToUpdate.end = document.getElementById("eventEnd").value;
+
+    $('#mycalendar').fullCalendar( 'updateEvent', this.eventToUpdate );    
+  }
+
+  createEvent() {
+
+    // const new_event = {
+    //   events: [
+    //       {
+    //           title: document.getElementById("eventTitle").value,
+    //           location: document.getElementById("eventLocation").value,
+    //           start: document.getElementById("eventStart").value,
+    //           end: document.getElementById("eventEnd").value,
+    //           // start: "2016-08-04T13:00:00Z",
+    //           // end: "2008-08-04T14:00:00Z",
+    //       },
+    //   ],
+    // }
+
+    // $('#mycalendar').fullCalendar( 'addEventSource', new_event );  
+    // console.log($('#mycalendar').fullCalendar( 'getEventSources' ));  
+
+    let eventId = $("#eventId")[0].value;
+    if (!eventId) {
+      console.log(this.Game.currentState);
+      const stateLength = this.Game.currentState.length;
+      if (stateLength == 0) { eventId = 0; }
+      else { eventId = this.Game.currentState[stateLength - 1].id + 1; }
+    } 
+
+
+    const newEvent = {
+      id: eventId,
+      title: $("#eventTitle")[0].value,
+      location: $("#eventLocation")[0].value,
+      start: $("#eventStart")[0].value,
+      end: $("#eventEnd")[0].value
+    }
+
+    this.Game.currentState.push(newEvent);
+    this.Game.update();
   }
 
   enter() {
@@ -216,11 +273,17 @@ class App {
           for (let i = 0; i < structs.length; i++) {
             const state = structs[i].state.map((c) => (
               {
-                x: c[0],
-                y: c[1],
-                z: c[2],
-                color: c[3],
-                names: c[4],
+                title: c[0],
+                location: c[1],
+                start: c[2],
+                end: c[3],
+                repeats: c[4],
+                names: c[5],
+                // x: c[0],
+                // y: c[1],
+                // z: c[2],
+                // color: c[3],
+                // names: c[4],
               }
             ));
 
@@ -342,7 +405,6 @@ document.getElementById(configs.buttons.submitButton).addEventListener("click", 
 document.getElementById(configs.buttons.closeSubmit).addEventListener("click", () => A.closeSubmit());
 document.getElementById(configs.buttons.submitStructure).addEventListener("click", () => A.submitStruct());
 
-
 function openAndCloseSetter(selector, callback, callbackObj) {
   const buttons = document.querySelectorAll(selector);
   for (const button of buttons) {
@@ -438,3 +500,49 @@ window.onkeydown = (e) => {
     default:
   }
 };
+
+$(document).ready(function() {
+  
+  $('#mycalendar').fullCalendar({
+    header: {
+      left: 'prev,next today',
+      center: 'title',
+      right: 'month,agendaWeek,agendaDay'
+    },
+    // defaultDate: '2014-06-12',
+    defaultView: 'agendaWeek',
+    editable: true,
+    events: [],
+    eventClick: function(calEvent, jsEvent, view) {
+
+        A.eventToUpdate = calEvent;
+        console.log(calEvent);
+        document.getElementById("eventId").value = calEvent.id;
+        document.getElementById("eventTitle").value = calEvent.title;
+        document.getElementById("eventLocation").value = calEvent.location;
+        document.getElementById("eventStart").value = calEvent.start;
+        document.getElementById("eventEnd").value = calEvent.end;
+
+
+        console.log('Event: ' + calEvent.title);
+        console.log('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+        console.log('View: ' + view.name);
+
+        // change the border color just for fun
+        $(this).css('border-color', 'red');
+
+    }
+  });
+
+  document.getElementById("submitCalendar").addEventListener("click", () => A.submitCalendar(), false);
+  document.getElementById("updateEvent").addEventListener("click", () => A.updateEvent(), false);
+document.getElementById("createEvent").addEventListener("click", () => A.createEvent(), false);
+
+  const Picker_start = new Pikaday({ field: $('#eventStart')[0] });
+  const Picker_end = new Pikaday({ field: $('#eventEnd')[0] });
+});
+
+
+
+
+
