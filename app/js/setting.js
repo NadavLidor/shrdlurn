@@ -1,37 +1,14 @@
 import configs from "./config";
 import { getHistoryElems, emojione } from "./util";
-
-import Isomer,
-       { Point,
-         Shape,
-         Color,
-         Canvas,
-	 Path
-       } from "isomer";
-
 /* eslint-disable new-cap */
 
 export default class Setting {
   constructor() {
-    this.iso = new Isomer(document.getElementById(configs.mainCanvas));
-    this.isoTarget = new Isomer(document.getElementById(configs.targetCanvas));
-    this.basicUnit = 0.8;
-    this.width = 10;
-    this.borderWidth = -0.2;
-    this.baseHeight = 0.0;
-    this.centerPoint = Point(this.width / 2, this.width / 2, this.width / 2);
-    this.rotation = (Math.PI / 12);
-    this.rotational = "A";
-    this.targetScale = 0.5;
-    this.targetTranslate = -2;
-
     this.renderCanvas(configs.defaultStruct);
-    this.renderTarget(configs.defaultStruct);
   }
 
   renderTarget(state) {
-    this.renderGrid(this.isoTarget, this.targetScale, this.targetTranslate);
-    this.renderBlocks(this.isoTarget, state, this.targetScale, this.targetTranslate);
+    // pass
   }
 
   renderCanvas(state) {
@@ -125,7 +102,7 @@ export default class Setting {
     )))
 
     // $('#mycalendar').fullCalendar( 'rerenderEvents' );
-      
+
   }
 
   renderBlocks(iso, state, scalingFactor = 1, translateFactor = 0) {

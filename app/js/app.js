@@ -1,4 +1,4 @@
-import "babel-polyfill"
+import "babel-polyfill";
 import Awesomplete from "awesomplete";
 import Game from "./game";
 import configs from "./config";
@@ -39,12 +39,11 @@ class App {
   }
 
   submitCalendar() {
-    console.log('testing');
-    //update currentState
+    console.log("testing");
+    // update currentState
   }
 
   updateEvent() {
-
     if ($("#eventId")[0].value == -1) return;
 
     console.log("before update:");
@@ -54,9 +53,9 @@ class App {
       id: $("#eventId")[0].value,
       title: $("#eventTitle")[0].value,
       location: $("#eventLocation")[0].value,
-      start: moment.utc($("#eventStart")[0].value, 'YYYY-MM-DD hh:mm:ss a'),
-      end: moment.utc($("#eventEnd")[0].value, 'YYYY-MM-DD hh:mm:ss a')
-    }
+      start: moment.utc($("#eventStart")[0].value, "YYYY-MM-DD hh:mm:ss a"),
+      end: moment.utc($("#eventEnd")[0].value, "YYYY-MM-DD hh:mm:ss a"),
+    };
 
     // this.Game.currentState = [newEvent,newEvent,newEvent];
 
@@ -70,11 +69,9 @@ class App {
 
     console.log("after update:");
     console.log(this.Game.currentState);
-
   }
 
   createEvent() {
-
     console.log("before update:");
     console.log(this.Game.currentState);
 
@@ -90,13 +87,13 @@ class App {
       id: eventId,
       title: $("#eventTitle")[0].value,
       location: $("#eventLocation")[0].value,
-      start: moment.utc($("#eventStart")[0].value, 'YYYY-MM-DD hh:mm:ss a'),
-      end: moment.utc($("#eventEnd")[0].value, 'YYYY-MM-DD hh:mm:ss a'),
-      repeats: [false,false,false,false,false,false,false,false,false],
+      start: moment.utc($("#eventStart")[0].value, "YYYY-MM-DD hh:mm:ss a"),
+      end: moment.utc($("#eventEnd")[0].value, "YYYY-MM-DD hh:mm:ss a"),
+      repeats: [false, false, false, false, false, false, false, false, false],
       names: [],
       // repeats: $("#eventRepeats")[0].value,
       // names: $("#eventNames")[0].value,
-    }
+    };
 
     // clear fields
     document.getElementById("eventId").value = null;
@@ -208,7 +205,7 @@ class App {
   revert(index) {
     this.Game = this.Setting.revertHistory(index, this.Game);
     this.activeHistoryElem = index;
-    this.Game.Logger.log({ type: "revert", msg: { index: index } })
+    this.Game.Logger.log({ type: "revert", msg: { index } });
   }
 
   setupAutocomplete() {
@@ -390,8 +387,8 @@ class App {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          name: name,
-          state: state,
+          name,
+          state,
           nsteps: this.Game.getSteps(),
           history: this.Game.history,
         }),
@@ -417,7 +414,6 @@ document.getElementById(configs.consoleElemId).addEventListener("keyup", () => t
 document.getElementById(configs.buttons.define).addEventListener("click", () => A.enter(), false);
 document.getElementById(configs.buttons.tryDefine).addEventListener("click", () => { A.Game.defineSuccess = ""; A.enter(); }, false);
 document.getElementById(configs.buttons.define_instead).addEventListener("click", (e) => { e.preventDefault(); A.openDefineInterface(); }, false);
-document.getElementById(configs.buttons.skip).addEventListener("click", () => A.skip(), false);
 document.getElementById(configs.buttons.putBack).addEventListener("click", () => A.putBack(), false);
 document.getElementById(configs.elems.defineConsole).addEventListener("keydown", (e) => A.defining(e), false);
 document.getElementById(configs.buttons.closeDefine).addEventListener("click", () => A.closeDefineInterface());
@@ -521,39 +517,36 @@ window.onkeydown = (e) => {
   }
 };
 
-$(document).ready(function() {
-  
-  $('#mycalendar').fullCalendar({
+$(document).ready(function () {
+  $("#mycalendar").fullCalendar({
+    height: 500,
     header: {
-      left: 'prev,next today',
-      center: 'title',
-      right: 'month,agendaWeek,agendaDay'
+      left: "prev,next today",
+      center: "title",
+      right: "month,agendaWeek,agendaDay",
     },
     // defaultDate: '2014-06-12',
-    defaultView: 'agendaWeek',
+    defaultView: "agendaWeek",
     editable: true,
     // ignoreTimezone: false,
-    timezone: 'UTC',
+    timezone: "UTC",
     events: [],
-    eventClick: function(event, jsEvent, view) {
-
-        document.getElementById("eventId").value = event.id;
-        document.getElementById("eventTitle").value = event.title;
-        document.getElementById("eventLocation").value = event.location;
-        document.getElementById("eventStart").value = moment.utc(event.start).format('YYYY-MM-DD hh:mm:ss a');
-        document.getElementById("eventEnd").value = moment.utc(event.end).format('YYYY-MM-DD hh:mm:ss a');
-        document.getElementById("eventRepeats").value = event.repeats;
-        document.getElementById("eventNames").value = event.names;
-
-    },
-
-    eventDrop: function(event, delta, revertFunc) {
-
+    eventClick(event, jsEvent, view) {
       document.getElementById("eventId").value = event.id;
       document.getElementById("eventTitle").value = event.title;
       document.getElementById("eventLocation").value = event.location;
-      document.getElementById("eventStart").value = moment.utc(event.start).format('YYYY-MM-DD hh:mm:ss a');
-      document.getElementById("eventEnd").value = moment.utc(event.end).format('YYYY-MM-DD hh:mm:ss a');
+      document.getElementById("eventStart").value = moment.utc(event.start).format("YYYY-MM-DD hh:mm:ss a");
+      document.getElementById("eventEnd").value = moment.utc(event.end).format("YYYY-MM-DD hh:mm:ss a");
+      document.getElementById("eventRepeats").value = event.repeats;
+      document.getElementById("eventNames").value = event.names;
+    },
+
+    eventDrop(event, delta, revertFunc) {
+      document.getElementById("eventId").value = event.id;
+      document.getElementById("eventTitle").value = event.title;
+      document.getElementById("eventLocation").value = event.location;
+      document.getElementById("eventStart").value = moment.utc(event.start).format("YYYY-MM-DD hh:mm:ss a");
+      document.getElementById("eventEnd").value = moment.utc(event.end).format("YYYY-MM-DD hh:mm:ss a");
       document.getElementById("eventRepeats").value = event.repeats;
       document.getElementById("eventNames").value = event.names;
 
@@ -562,16 +555,14 @@ $(document).ready(function() {
       } else {
         A.Game.update();
       }
-      
     },
 
-    eventResize: function(event, delta, revertFunc) {
-
+    eventResize(event, delta, revertFunc) {
       document.getElementById("eventId").value = event.id;
       document.getElementById("eventTitle").value = event.title;
       document.getElementById("eventLocation").value = event.location;
-      document.getElementById("eventStart").value = moment.utc(event.start).format('YYYY-MM-DD hh:mm:ss a');
-      document.getElementById("eventEnd").value = moment.utc(event.end).format('YYYY-MM-DD hh:mm:ss a');
+      document.getElementById("eventStart").value = moment.utc(event.start).format("YYYY-MM-DD hh:mm:ss a");
+      document.getElementById("eventEnd").value = moment.utc(event.end).format("YYYY-MM-DD hh:mm:ss a");
       document.getElementById("eventRepeats").value = event.repeats;
       document.getElementById("eventNames").value = event.names;
 
@@ -580,12 +571,10 @@ $(document).ready(function() {
       } else {
         A.Game.update();
       }
-      
-      
     },
 
-    eventRender: function(event, element) {
-      element.find('.fc-title').append("<br/>" + event.location); 
+    eventRender(event, element) {
+      element.find(".fc-title").append("<br/>" + event.location);
     },
 
   });
@@ -594,11 +583,6 @@ $(document).ready(function() {
   document.getElementById("updateEvent").addEventListener("click", () => A.updateEvent(), false);
   document.getElementById("createEvent").addEventListener("click", () => A.createEvent(), false);
 
-  const Picker_start = new Pikaday({ field: $('#eventStart')[0], format: 'YYYY-MM-DD hh:mm:ss a' });
-  const Picker_end = new Pikaday({ field: $('#eventEnd')[0], format: 'YYYY-MM-DD hh:mm:ss a' });
+  const Picker_start = new Pikaday({ field: $("#eventStart")[0], format: "YYYY-MM-DD hh:mm:ss a" });
+  const Picker_end = new Pikaday({ field: $("#eventEnd")[0], format: "YYYY-MM-DD hh:mm:ss a" });
 });
-
-
-
-
-

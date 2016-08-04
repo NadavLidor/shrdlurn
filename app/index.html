@@ -16,18 +16,10 @@
   <body>
     <div class="header">
       <div class="logo">
-        <span class="l-r">C</span>
-        <span class="l-y">A</span>
-        <span class="l-o">L</span>
-        <span class="l-y">E</span>
-        <span class="l-b">N</span>
-        <span class="l-b">D</span>
-        <span class="l-y">A</span>
-        <span class="l-o">R</span>
+        <span>CADLURN</span>
         <span class="sublogo">A Stanford NLP Project</span>
       </div>
       <div class="nav">
-        <div class="structures-toggle">Structures</div>
         <div class="help-toggle">Help Me</div>
         <div class="keyboard-toggle">Keyboard Shortcuts</div>
         <div class="hidden">Restart Tutorial</div>
@@ -35,20 +27,13 @@
     </div>
     <div class="container">
       <div class="main">
-        <div id="calendar"></div>
+        <div id="mycalendar"></div>
         <div id="define_prompt" class="canvas-prompt hidden">
           <h1>SHRDLURN does not understand.</h1>
           <hr>
           <p>Help SHRDLURN learn by teaching the phrase you attempted to instruct SHRDLURN with by defining it.</p>
           <button type="button" class="bold-button" id="define_instead">Ok. TEACH SHRDLURN.</button>
         </div>
-        <div class="rotate-icons">
-          <div id="rtl" data-rotate="-2"></div>
-          <div id="rtr" data-rotate="2"></div>
-          <div id="rbl" data-rotate="-1" class="active"></div>
-          <div id="rbr" data-rotate="1"></div>
-        </div>
-        <canvas id="main_canvas" width="1650" height="1200"></canvas>
         <div class="define-area" id="define_interface">
           <div class="status">
             <span class="reaction"><img class="emojione" alt=":rolling_eyes:" src="http://cdn.jsdelivr.net/emojione/assets/png/1f642.png"></span>
@@ -98,7 +83,7 @@
             <strong>example query:</strong> <span id="random"></span>
           </div>
         </div>
-        <div class="meta-buttons">
+        <div class="meta-buttons hidden">
           <button type="button" id="clearbutton">clear</button>
           <button type="button" id="submitbutton">submit</button>
           <br>
@@ -108,20 +93,29 @@
         </div>
       </div>
       <div class="panel">
-        <div class="target card">
-          <div class="card-header">
-            Target
-            <button type="button" id="skip_button" class="seethrough">skip (<span id="skips_left">2</span> left)</button>
-          </div>
-          <div class="target-footer">
-            <div>
-              <div>possible: <span class="possible_steps" style="font-weight:bold;">5</span> steps</div>
+        <div class="event-dialog target card hidden">
+          <form>
+            <div class="card-header">
+              Add/Edit Event
             </div>
-            <div>
-              <div>maximum: <span class="max_steps" style="font-weight:bold;">15</span> steps</div>
+            <div class="event-form">
+                <input type="hidden" id="eventId">
+                <input type="hidden" id="eventRepeats">
+                <input type="hidden" id="eventNames">
+                <input type="text" id="eventTitle" placeholder="event name">
+                <input type="text" id="eventLocation" placeholder="location">
+                <input type="text" id="eventStart" data-field="datetime" placeholder="start time">
+                <input type="text" id="eventEnd" data-field="datetime" placeholder="end time">
             </div>
-          </div>
-          <canvas id="target_canvas" width="512" height="800"></canvas>
+            <div class="target-footer">
+              <div>
+                <button type="button" class="enter-button" id="updateEvent">update event</button>
+              </div>
+              <div>
+                <button type="button" class="enter-button" id="createEvent">new event</button>
+              </div>
+            </div>
+          </form>
         </div>
         <div class="history">
           <div class="card-header">
@@ -245,24 +239,6 @@
     ga('create', 'UA-74509910-1', 'auto');
     ga('send', 'pageview');
     </script>
-  <div id="mycalendar"></div>
-  <div id="eventDialog" class="hidden">
-    <form>
-      <h1>Add/Edit Event:</h1>
-      <input type="hidden" id="eventId">
-      <input type="hidden" id="eventRepeats">
-      <input type="hidden" id="eventNames">
-      <input type="text" id="eventTitle" placeholder="event name">
-      <input type="text" id="eventLocation" placeholder="location">
-      <input type="text" id="eventStart" data-field="datetime" placeholder="start time">
-      <input type="text" id="eventEnd" data-field="datetime" placeholder="end time">
-    </form>
-    <button type="button" class="enter-button" id="updateEvent">update event</button>
-    <button type="button" class="enter-button" id="createEvent">create new event</button>
-    <button type="button" class="enter-button" id="submitCalendar">submit definition</button>
-
-  </div>
-  
   </body>
 
 </html>
