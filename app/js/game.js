@@ -233,6 +233,13 @@ export default class Game {
     } else {
         this.Setting.status("↓: out of options, try to rephrase or teach by changing the calendar", `${this.query} (#${this.selectedResp + 1}/${this.responses.length})`, this.responses[0].maxprop | -1);
         $('#eventDialog')[0].classList.remove('hidden');
+        this.responses = [];
+        this.update();
+        // document.getElementById("eventId") = null; //TODO
+        // document.getElementById("eventTitle").value = null;
+        // document.getElementById("eventLocation").value = null;
+        // document.getElementById("eventStart").value = null;
+        // document.getElementById("eventEnd").value = null;
     }
   }
 
