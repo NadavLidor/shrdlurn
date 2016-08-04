@@ -92,6 +92,8 @@ class App {
       location: $("#eventLocation")[0].value,
       start: moment.utc($("#eventStart")[0].value, 'YYYY-MM-DD hh:mm:ss a'),
       end: moment.utc($("#eventEnd")[0].value, 'YYYY-MM-DD hh:mm:ss a'),
+      repeats: [false,false,false,false,false,false,false,false,false],
+      names: [],
       // repeats: $("#eventRepeats")[0].value,
       // names: $("#eventNames")[0].value,
     }
@@ -533,15 +535,15 @@ $(document).ready(function() {
     // ignoreTimezone: false,
     timezone: 'UTC',
     events: [],
-    eventClick: function(calEvent, jsEvent, view) {
+    eventClick: function(event, jsEvent, view) {
 
-        document.getElementById("eventId").value = calEvent.id;
-        document.getElementById("eventTitle").value = calEvent.title;
-        document.getElementById("eventLocation").value = calEvent.location;
-        document.getElementById("eventStart").value = moment.utc(calEvent.start).format('YYYY-MM-DD hh:mm:ss a');
-        document.getElementById("eventEnd").value = moment.utc(calEvent.end).format('YYYY-MM-DD hh:mm:ss a');
-        // document.getElementById("eventRepeats").value = calEvent.repeats;
-        // document.getElementById("eventNames").value = calEvent.names;
+        document.getElementById("eventId").value = event.id;
+        document.getElementById("eventTitle").value = event.title;
+        document.getElementById("eventLocation").value = event.location;
+        document.getElementById("eventStart").value = moment.utc(event.start).format('YYYY-MM-DD hh:mm:ss a');
+        document.getElementById("eventEnd").value = moment.utc(event.end).format('YYYY-MM-DD hh:mm:ss a');
+        document.getElementById("eventRepeats").value = event.repeats;
+        document.getElementById("eventNames").value = event.names;
 
     },
 
@@ -552,7 +554,14 @@ $(document).ready(function() {
       document.getElementById("eventLocation").value = event.location;
       document.getElementById("eventStart").value = moment.utc(event.start).format('YYYY-MM-DD hh:mm:ss a');
       document.getElementById("eventEnd").value = moment.utc(event.end).format('YYYY-MM-DD hh:mm:ss a');
-      A.updateEvent();
+      document.getElementById("eventRepeats").value = event.repeats;
+      document.getElementById("eventNames").value = event.names;
+
+      if (A.Game.currentStateEditable == true) {
+        A.updateEvent();
+      } else {
+        A.Game.update();
+      }
       
     },
 
@@ -563,17 +572,25 @@ $(document).ready(function() {
       document.getElementById("eventLocation").value = event.location;
       document.getElementById("eventStart").value = moment.utc(event.start).format('YYYY-MM-DD hh:mm:ss a');
       document.getElementById("eventEnd").value = moment.utc(event.end).format('YYYY-MM-DD hh:mm:ss a');
-      A.updateEvent();
+      document.getElementById("eventRepeats").value = event.repeats;
+      document.getElementById("eventNames").value = event.names;
+
+      if (A.Game.currentStateEditable == true) {
+        A.updateEvent();
+      } else {
+        A.Game.update();
+      }
+      
       
     },
 
     eventRender: function(event, element) {
-        event.title = event.title + "\n" + event.location;
+      element.find('.fc-title').append("<br/>" + event.location); 
     },
 
   });
 
-  document.getElementById("submitCalendar").addEventListener("click", () => A.submitCalendar(), false);
+  document.getElementById("submitCalendar").addEventListener("click", () => A.Game.submitCalendar(), false);
   document.getElementById("updateEvent").addEventListener("click", () => A.updateEvent(), false);
   document.getElementById("createEvent").addEventListener("click", () => A.createEvent(), false);
 

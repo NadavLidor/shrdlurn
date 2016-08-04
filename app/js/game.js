@@ -6,7 +6,7 @@ import { getTurkId, getTurkCode } from "./turk";
 export default class Game {
   constructor(setting, sempreClient) {
     this.sessionId = configs.defaultSessionId;
-
+    this.currentStateEditable = false;
     this.currentState = configs.defaultStruct;
     this.responses = [];
     this.selectedResp = -1;
@@ -121,6 +121,7 @@ export default class Game {
       this.resetResponses();
       this.update();
       this.Setting.removeAccept();
+      this.currentStateEditable = false;
     } else {
       this.Setting.status("✓: can't accept nothing, say something first");
     }
@@ -154,6 +155,7 @@ export default class Game {
   }
 
   update() {
+
     /* Update the canvas */
     let afterStruct = this.currentState;
     if (this.responses.length > 0) {
@@ -164,6 +166,11 @@ export default class Game {
     /* Update the history */
     this.Setting.renderHistory(this.history);
     this.Setting.updateSteps(this.getSteps());
+  }
+
+  submitCalendar() {
+    this.currentStateEditable = false;
+    this.querySempre("correct world state");
   }
 
   define(query) {
@@ -231,6 +238,7 @@ export default class Game {
       this.Setting.status("↓: showing the next one", `${this.query} (#${this.selectedResp + 1}/${this.responses.length})`, this.responses[0].maxprop | -1);
       this.Logger.log({ type: "scroll", msg: "next" });
     } else {
+        this.currentStateEditable = true;
         this.Setting.status("↓: out of options, try to rephrase or teach by changing the calendar", `${this.query} (#${this.selectedResp + 1}/${this.responses.length})`, this.responses[0].maxprop | -1);
         $('#eventDialog')[0].classList.remove('hidden');
         this.responses = [];
@@ -240,6 +248,8 @@ export default class Game {
         document.getElementById("eventLocation").value = null;
         document.getElementById("eventStart").value = null;
         document.getElementById("eventEnd").value = null;
+        document.getElementById("eventRepeats").value = null;
+        document.getElementById("eventNames").value = null;
     }
   }
 

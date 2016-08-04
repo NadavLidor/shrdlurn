@@ -124,7 +124,7 @@ export default class Setting {
       }
     )))
 
-    $('#mycalendar').fullCalendar( 'rerenderEvents' );
+    // $('#mycalendar').fullCalendar( 'rerenderEvents' );
       
   }
 
