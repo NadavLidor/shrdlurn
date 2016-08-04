@@ -36,10 +36,6 @@ export default class Setting {
 
   renderCanvas(state) {
 
-    console.log("state: ");
-    console.log(state);
-
-    // TODO nadav
     this.renderCalendar(state);
 
     // this.renderGrid(this.iso);
@@ -108,8 +104,11 @@ export default class Setting {
 
   renderCalendar(state) {
 
+    console.log("state:");
+    console.log(state);
+
     // remove all events
-    $('#mycalendar').fullCalendar('removeEvents')
+    $('#mycalendar').fullCalendar('removeEvents');
 
     // add new events
     $('#mycalendar').fullCalendar('addEventSource', state.map((e) => (
@@ -119,6 +118,8 @@ export default class Setting {
         start: e.start,
         end: e.end,
         location : e.location,
+        repeats : e.repeats,
+        names : e.names,
         // dow: [2],
       }
     )))

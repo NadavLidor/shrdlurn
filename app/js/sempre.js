@@ -59,8 +59,10 @@ export default class SempreClient {
         id: idx,
         title: c[0],
         location: c[1],
-        start: new Date(c[2]),
-        end: new Date(c[3]),
+        start: moment.utc(c[2]),
+        end: moment.utc(c[3]),
+        // start: new Date(c[2]),
+        // end: new Date(c[3]),
         repeats: c[4],
         names: c[5],
       }

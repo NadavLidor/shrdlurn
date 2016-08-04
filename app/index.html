@@ -239,14 +239,16 @@
     ga('send', 'pageview');
     </script>
   <div id="mycalendar"></div>
-  <div id="eventDialog">
+  <div id="eventDialog" class="hidden">
     <form>
       <h1>Add/Edit Event:</h1>
       <input type="hidden" id="eventId">
-      <input type="text" id="eventTitle" placeholder="Title">
-      <input type="text" id="eventLocation" placeholder="Location">
-      <input type="text" id="eventStart" data-field="datetime" placeholder="Location">
-      <input type="text" id="eventEnd" data-field="datetime" placeholder="Location">
+      <!-- <input type="hidden" id="eventRepeats"> -->
+      <!-- <input type="hidden" id="eventNames"> -->
+      <input type="text" id="eventTitle" placeholder="event name">
+      <input type="text" id="eventLocation" placeholder="location">
+      <input type="text" id="eventStart" data-field="datetime" placeholder="start time">
+      <input type="text" id="eventEnd" data-field="datetime" placeholder="end time">
     </form>
     <button type="button" class="enter-button" id="updateEvent">update event</button>
     <button type="button" class="enter-button" id="createEvent">create new event</button>

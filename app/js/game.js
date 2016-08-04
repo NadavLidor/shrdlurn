@@ -59,7 +59,15 @@ export default class Game {
     const query = this.Sempre.formatQuery(querystr);
     var contextCommand = "(context)";
     if (this.currentState) {
-      const currentState = JSON.stringify(JSON.stringify(this.currentState.map(c => ([c.x, c.y, c.z, c.color, c.names]))));
+      // const currentState = JSON.stringify(JSON.stringify(this.currentState.map(c => ([c.x, c.y, c.z, c.color, c.names]))));
+      const currentState = JSON.stringify(JSON.stringify(this.currentState.map(c => ([
+        c.title, 
+        c.location, 
+        c.start, 
+        c.end, 
+        // c.repeats,
+        // c.names
+        ]))));
       contextCommand = `(context (graph NaiveKnowledgeGraph ((string ${currentState}) (name b) (name c))))`;
     }
 
@@ -223,7 +231,8 @@ export default class Game {
       this.Setting.status("↓: showing the next one", `${this.query} (#${this.selectedResp + 1}/${this.responses.length})`, this.responses[0].maxprop | -1);
       this.Logger.log({ type: "scroll", msg: "next" });
     } else {
-      this.Setting.status("↓: already showing the last one", `${this.query} (#${this.selectedResp + 1}/${this.responses.length})`, this.responses[0].maxprop | -1);
+        this.Setting.status("↓: out of options, try to rephrase or teach by changing the calendar", `${this.query} (#${this.selectedResp + 1}/${this.responses.length})`, this.responses[0].maxprop | -1);
+        $('#eventDialog')[0].classList.remove('hidden');
     }
   }
 
