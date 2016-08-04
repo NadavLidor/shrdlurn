@@ -62,11 +62,11 @@ export default class Game {
       // const currentState = JSON.stringify(JSON.stringify(this.currentState.map(c => ([c.x, c.y, c.z, c.color, c.names]))));
       const currentState = JSON.stringify(JSON.stringify(this.currentState.map(c => ([
         c.title, 
-        c.location, 
-        c.start, 
-        c.end, 
-        // c.repeats,
-        // c.names
+        c.location, //TODO here!!!!!!
+        c.start.format('YYYY-MM-DDTHH:mm:ss'), 
+        c.end.format('YYYY-MM-DDTHH:mm:ss'), 
+        c.repeats,
+        c.names
         ]))));
       contextCommand = `(context (graph NaiveKnowledgeGraph ((string ${currentState}) (name b) (name c))))`;
     }
@@ -235,11 +235,11 @@ export default class Game {
         $('#eventDialog')[0].classList.remove('hidden');
         this.responses = [];
         this.update();
-        // document.getElementById("eventId") = null; //TODO
-        // document.getElementById("eventTitle").value = null;
-        // document.getElementById("eventLocation").value = null;
-        // document.getElementById("eventStart").value = null;
-        // document.getElementById("eventEnd").value = null;
+
+        document.getElementById("eventTitle").value = null;
+        document.getElementById("eventLocation").value = null;
+        document.getElementById("eventStart").value = null;
+        document.getElementById("eventEnd").value = null;
     }
   }
 

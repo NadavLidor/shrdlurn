@@ -45,9 +45,10 @@ class App {
 
   updateEvent() {
 
+    if ($("#eventId")[0].value == -1) return;
+
     console.log("before update:");
     console.log(this.Game.currentState);
-
 
     const newEvent = {
       id: $("#eventId")[0].value,
@@ -542,8 +543,6 @@ $(document).ready(function() {
         // document.getElementById("eventRepeats").value = calEvent.repeats;
         // document.getElementById("eventNames").value = calEvent.names;
 
-        // change the border color
-        $(this).css('border-color', 'red');
     },
 
     eventDrop: function(event, delta, revertFunc) {
@@ -555,6 +554,21 @@ $(document).ready(function() {
       document.getElementById("eventEnd").value = moment.utc(event.end).format('YYYY-MM-DD hh:mm:ss a');
       A.updateEvent();
       
+    },
+
+    eventResize: function(event, delta, revertFunc) {
+
+      document.getElementById("eventId").value = event.id;
+      document.getElementById("eventTitle").value = event.title;
+      document.getElementById("eventLocation").value = event.location;
+      document.getElementById("eventStart").value = moment.utc(event.start).format('YYYY-MM-DD hh:mm:ss a');
+      document.getElementById("eventEnd").value = moment.utc(event.end).format('YYYY-MM-DD hh:mm:ss a');
+      A.updateEvent();
+      
+    },
+
+    eventRender: function(event, element) {
+        event.title = event.title + "\n" + event.location;
     },
 
   });
