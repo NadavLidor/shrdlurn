@@ -171,6 +171,8 @@ export default class Game {
   submitCalendar() {
     this.currentStateEditable = false;
     this.querySempre("correct world state");
+    this.Setting.closeDefineInterface();
+
   }
 
   define(query) {
@@ -240,16 +242,7 @@ export default class Game {
     } else {
         this.currentStateEditable = true;
         this.Setting.status("↓: out of options, try to rephrase or teach by changing the calendar", `${this.query} (#${this.selectedResp + 1}/${this.responses.length})`, this.responses[0].maxprop | -1);
-        $('#eventDialog')[0].classList.remove('hidden');
-        this.responses = [];
-        this.update();
-
-        document.getElementById("eventTitle").value = null;
-        document.getElementById("eventLocation").value = null;
-        document.getElementById("eventStart").value = null;
-        document.getElementById("eventEnd").value = null;
-        document.getElementById("eventRepeats").value = null;
-        document.getElementById("eventNames").value = null;
+        this.Setting.promptDefine();
     }
   }
 

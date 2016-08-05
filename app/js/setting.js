@@ -303,7 +303,21 @@ export default class Setting {
     }
   }
 
-  openDefineInterface(query, canAnswer, coverage) {
+  openDefineInterface(query, canAnswer, coverage, game) {
+    
+    $('#eventDialog')[0].classList.remove('hidden');
+    game.responses = [];
+    game.update();
+
+    document.getElementById("eventTitle").value = null;
+    document.getElementById("eventLocation").value = null;
+    document.getElementById("eventStart").value = null;
+    document.getElementById("eventEnd").value = null;
+    document.getElementById("eventRepeats").value = null;
+    document.getElementById("eventNames").value = null;
+
+
+
     if (query.length === 0) {
       this.status("nothing to define");
       return false;
@@ -327,6 +341,11 @@ export default class Setting {
   }
 
   closeDefineInterface() {
+    
+    $('#eventDialog')[0].classList.add('hidden');
+
+
+
     const defineInterface = document.getElementById(configs.elems.defineInterface);
     defineInterface.classList.remove("active");
 

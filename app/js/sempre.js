@@ -47,6 +47,7 @@ export default class SempreClient {
   formatValue(value) {
     if (typeof value === "undefined") return "";
 
+    console.log("sempre: value");
     console.log(value);
 
     const valueArray = JSON.parse(value);

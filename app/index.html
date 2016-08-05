@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="teach the computer English">
-    <title>SHRDLURN</title>
+    <title>CADLURN</title>
 
     <!-- calendar stuff -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -29,10 +29,10 @@
       <div class="main">
         <div id="mycalendar"></div>
         <div id="define_prompt" class="canvas-prompt hidden">
-          <h1>SHRDLURN does not understand.</h1>
+          <h1>CADLURN does not understand.</h1>
           <hr>
-          <p>Help SHRDLURN learn by teaching the phrase you attempted to instruct SHRDLURN with by defining it.</p>
-          <button type="button" class="bold-button" id="define_instead">Ok. TEACH SHRDLURN.</button>
+          <p>Help CADLURN learn by making the necessary changes on the calendar.</p>
+          <button type="button" class="bold-button" id="define_instead">Ok. TEACH CADLURN.</button>
         </div>
         <div class="define-area" id="define_interface">
           <div class="status">
@@ -40,11 +40,14 @@
             <span id="define_header"></span>
             <span class="remove-button close-console" id="close_define">&times;</span>
           </div>
-          <div class="input-group">
-            <input type="text" id="definetextarea" />
-            <div class="buttons-at-end">
-              <button type="button" class="enter-button" id="try_define">try</button>
-              <button type="button" class="accept-button" id="define_phrase_button">define</button>
+          <button type="button" class="enter-button" id="submitCalendar">submit to define</button>
+          <div class="hidden">
+            <div class="input-group">
+              <input type="text" id="definetextarea" />
+              <div class="buttons-at-end">
+                <button type="hidden" class="enter-button" id="try_define">try</button>
+                <button type="hidden" class="accept-button" id="define_phrase_button">define</button>
+              </div>
             </div>
           </div>
           <div class="examples">
@@ -93,7 +96,7 @@
         </div>
       </div>
       <div class="panel">
-        <div class="event-dialog target card hidden">
+        <div id="eventDialog" class="event-dialog target card hidden">
           <form>
             <div class="card-header">
               Add/Edit Event
