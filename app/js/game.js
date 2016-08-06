@@ -9,6 +9,7 @@ export default class Game {
     this.currentStateEditable = false;
     this.currentState = configs.defaultStruct;
     this.responses = [];
+    this.prevReponses = [];
     this.selectedResp = -1;
     this.query = "";
     this.history = this.initialHistory();
@@ -85,6 +86,7 @@ export default class Game {
           this.query = query;
           this.Setting.status("SHRDLURN did not understand", query);
           this.Setting.promptDefine();
+          this.Setting.promptRephrase();
           this.Logger.log({ type: "queryUnknown", msg: { query: query } });
           this.Setting.promptAccept();
         } else {
@@ -241,15 +243,22 @@ export default class Game {
       this.Logger.log({ type: "scroll", msg: "next" });
     } else {
         this.currentStateEditable = true;
-        this.Setting.status("↓: out of options, try to rephrase or teach by changing the calendar", `${this.query} (#${this.selectedResp + 1}/${this.responses.length})`, this.responses[0].maxprop | -1);
+        this.Setting.status("↓: out of options, try to teach or ", `${this.query} (#${this.selectedResp + 1}/${this.responses.length})`, this.responses[0].maxprop | -1);
         this.Setting.promptDefine();
+        this.Setting.promptRephrase();
     }
   }
 
   prev() {
     if (this.responses.length <= 0) {
       this.Setting.status("↑: can't scroll, say something or ⎌");
-    } else if (this.selectedResp !== 0) {
+    } 
+
+    else if (!document.getElementById(configs.elems.definePrompt).classList.contains("hidden")) {
+      this.Setting.removePromptDefine();
+    }
+
+    else if (this.selectedResp !== 0) {
       this.selectedResp--;
       this.update();
       this.Setting.status("↑: showing the previous one", `${this.query} (#${this.selectedResp + 1}/${this.responses.length})`, this.responses[0].maxprop | -1);

@@ -41,6 +41,7 @@ class App {
   submitCalendar() {
     console.log("submitCalendar");
     this.Game.submitCalendar();
+    this.Setting
     this.closeDefineInterface();
   }
 
@@ -56,8 +57,8 @@ class App {
       location: $("#eventLocation")[0].value,
       start: moment.utc($("#eventStart")[0].value, 'YYYY-MM-DD hh:mm:ss a'),
       end: moment.utc($("#eventEnd")[0].value, 'YYYY-MM-DD hh:mm:ss a'),
-      repeats: $("#eventRepeats")[0].value,
-      names: $("#eventNames")[0].value,
+      repeats: JSON.parse("[" + $("#eventRepeats")[0].value + "]"),
+      names: JSON.parse("[" + $("#eventNames")[0].value + "]"),
     }
 
 
@@ -177,8 +178,21 @@ class App {
     }
   }
 
+  openRephraseInterface() {
+    if (this.Setting.openRephraseInterface(this.Game.query, this.Game.responses.length > 0, this.Game.taggedCover, this.Game)) {
+      this.defineState = true;
+    }
+  }
+
   closeDefineInterface() {
     this.Setting.closeDefineInterface();
+    this.Game.defineSuccess = "";
+    this.defineState = false;
+  }
+
+  closeRephraseInterface() {
+    console.log("hello");
+    this.Setting.closeRephraseInterface();
     this.Game.defineSuccess = "";
     this.defineState = false;
   }
@@ -422,9 +436,11 @@ document.getElementById(configs.consoleElemId).addEventListener("keyup", () => t
 document.getElementById(configs.buttons.define).addEventListener("click", () => A.enter(), false);
 document.getElementById(configs.buttons.tryDefine).addEventListener("click", () => { A.Game.defineSuccess = ""; A.enter(); }, false);
 document.getElementById(configs.buttons.define_instead).addEventListener("click", (e) => { e.preventDefault(); A.openDefineInterface(); }, false);
+document.getElementById(configs.buttons.rephrase_instead).addEventListener("click", (e) => { e.preventDefault(); A.openRephraseInterface(); }, false);
 document.getElementById(configs.buttons.putBack).addEventListener("click", () => A.putBack(), false);
 document.getElementById(configs.elems.defineConsole).addEventListener("keydown", (e) => A.defining(e), false);
 document.getElementById(configs.buttons.closeDefine).addEventListener("click", () => A.closeDefineInterface());
+document.getElementById(configs.buttons.closeRephrase).addEventListener("click", () => A.closeRephraseInterface());
 document.getElementById(configs.buttons.submitButton).addEventListener("click", () => A.openSubmit());
 document.getElementById(configs.buttons.closeSubmit).addEventListener("click", () => A.closeSubmit());
 document.getElementById(configs.buttons.submitStructure).addEventListener("click", () => A.submitStruct());
@@ -571,12 +587,15 @@ $(document).ready(function () {
       document.getElementById("eventLocation").value = event.location;
       document.getElementById("eventStart").value = moment.utc(event.start).format('YYYY-MM-DD hh:mm:ss a');
       document.getElementById("eventEnd").value = moment.utc(event.end).format('YYYY-MM-DD hh:mm:ss a');
-      document.getElementById("eventRepeats").value = JSON.parse("[" + event.repeats + "]");
+
+      document.getElementById("eventRepeats").value = event.repeats;
+      // document.getElementById("eventRepeats").value = JSON.parse("[" + event.repeats + "]");
       document.getElementById("eventNames").value = event.names;
 
       console.log("app resize");
       console.log(typeof event.repeats);
-      console.log(JSON.parse("[" + event.repeats + "]"));
+      // console.log(JSON.parse("[" + event.repeats + "]"));
+      // console.log(document.getElementById("eventRepeats").value);
       console.log(typeof event.names);
 
       if (A.Game.currentStateEditable == true) {

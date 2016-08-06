@@ -316,8 +316,6 @@ export default class Setting {
     document.getElementById("eventRepeats").value = null;
     document.getElementById("eventNames").value = null;
 
-
-
     if (query.length === 0) {
       this.status("nothing to define");
       return false;
@@ -327,7 +325,7 @@ export default class Setting {
     defineInterface.classList.add("active");
 
     const defineStatus = document.getElementById(configs.elems.defineStatus);
-    defineStatus.innerHTML = `Teach SHRDLURN ${query}.`;
+    defineStatus.innerHTML = `Show CADLURN what ${query} means.`;
 
     const toggleButton = document.getElementById(configs.buttons.toggleDefine);
     toggleButton.innerHTML = "Return";
@@ -340,11 +338,53 @@ export default class Setting {
     return true;
   }
 
+  openRephraseInterface(query, canAnswer, coverage, game) {
+    
+    game.prevReponses = game.responses;
+    game.responses = [];
+    game.update();
+
+    if (query.length === 0) {
+      this.status("nothing to rephrase");
+      return false;
+    }
+
+    const rephraseInterface = document.getElementById(configs.elems.rephraseInterface);
+    rephraseInterface.classList.add("active");
+
+    const rephraseStatus = document.getElementById(configs.elems.rephraseStatus);
+    rephraseStatus.innerHTML = `Show CADLURN what ${query} means.`;
+
+    const toggleButton = document.getElementById(configs.buttons.toggleDefine);
+    toggleButton.innerHTML = "Return";
+
+    this.removePromptDefine();
+
+    this.tryRephrase(query, false, canAnswer, coverage);
+
+    document.getElementById(configs.elems.defineConsole).focus();
+    return true;
+  }
+
+  closeRephraseInterface() {
+
+    const rephraseInterface = document.getElementById(configs.elems.rephraseInterface);
+    rephraseInterface.classList.remove("active");
+
+    const toggleButton = document.getElementById(configs.buttons.toggleDefine);
+    toggleButton.innerHTML = "Define";
+
+    document.querySelector('#define_interface .input-group').classList.remove("accepting");
+
+    this.removePromptDefine();
+
+    const consoleElem = document.getElementById(configs.elems.console);
+    consoleElem.focus();
+  }
+
   closeDefineInterface() {
     
     $('#eventDialog')[0].classList.add('hidden');
-
-
 
     const defineInterface = document.getElementById(configs.elems.defineInterface);
     defineInterface.classList.remove("active");
@@ -369,7 +409,7 @@ export default class Setting {
       if (canAnswer) {
         defineHeader.innerHTML = `Already understand ${query}, teach another meaning?`;
       } else {
-        defineHeader.innerHTML = `Didn't understand "${this.intelHighlight(coverage)}". Please rephrase:`;
+        defineHeader.innerHTML = `Didn't understand "${this.intelHighlight(coverage)}". Please teach CADLUN by changing the calendar.`;
       }
     } else {
       if (canAnswer) {
@@ -389,6 +429,40 @@ export default class Setting {
         } else if (defNoCover) {
           // updateStatus("SHRDLRUN cannot learn from this definition");
           defineHeader.innerHTML = `Nothing (colors, numbers, etc) in "${this.intelHighlight(coverage)}" matches "${oldQuery}", so SHRDLURN cannot learn from this.`;
+        }
+      }
+    }
+  }
+
+tryRephrase(query, refineDefine, canAnswer, coverage = [], commandResponse = [], oldQuery = "") {
+    const rephraseHeader = document.getElementById(configs.elems.rephraseHeader);
+    document.getElementById(configs.elems.definePrompt).classList.add("hidden");
+    document.querySelector('#define_interface .input-group').classList.remove("accepting");
+
+    if (!refineDefine) {
+      if (canAnswer) {
+        rephraseHeader.innerHTML = `Already understand ${query}, teach another meaning TODO?`;
+      } else {
+        rephraseHeader.innerHTML = `Didn't understand "${this.intelHighlight(coverage)}". Try to say the same thing differently:`;
+      }
+    } else {
+      if (canAnswer) {
+        rephraseHeader.innerHTML = `SHRDLURN understands the definition, "${query}". If this is correct, click "define" to submit the definition.`;
+        document.querySelector('#define_interface .input-group').classList.add("accepting");
+      } else {
+        rephraseHeader.innerHTML = `Still don't understand "${this.intelHighlight(coverage)}". Please rephrase:`;
+      }
+
+      // Special Statuses
+      if (commandResponse.length > 0) {
+        const defCore = commandResponse.indexOf("Core") !== -1;
+        const defNoCover = commandResponse.indexOf("NoCover") !== -1;
+        if (defCore) {
+          // updateStatus("cannot redefine the core language!");
+          rephraseHeader.innerHTML = `"${oldQuery}" is precisely understood, and cannot be redefined by "${this.intelHighlight(coverage)}".`;
+        } else if (defNoCover) {
+          // updateStatus("SHRDLRUN cannot learn from this definition");
+          rephraseHeader.innerHTML = `Nothing (colors, numbers, etc) in "${this.intelHighlight(coverage)}" matches "${oldQuery}", so SHRDLURN cannot learn from this.`;
         }
       }
     }
@@ -453,6 +527,10 @@ export default class Setting {
 
   promptDefine() {
     document.getElementById(configs.elems.definePrompt).classList.remove("hidden");
+  }
+
+  promptRephrase() {
+    document.getElementById(configs.buttons.rephrase_instead).classList.remove("hidden");
   }
 
   removePromptDefine() {

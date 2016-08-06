@@ -34,13 +34,15 @@
           <p>Help CADLURN learn by making the necessary changes on the calendar.</p>
           <button type="button" class="bold-button" id="define_instead">Ok. TEACH CADLURN.</button>
         </div>
+
+
         <div class="define-area" id="define_interface">
           <div class="status">
             <span class="reaction"><img class="emojione" alt=":rolling_eyes:" src="http://cdn.jsdelivr.net/emojione/assets/png/1f642.png"></span>
             <span id="define_header"></span>
             <span class="remove-button close-console" id="close_define">&times;</span>
           </div>
-          <button type="button" class="enter-button" id="submitCalendar">submit to define</button>
+          <button type="button" class="enter-button" id="submitCalendar">submit definition</button>
           <div class="hidden">
             <div class="input-group">
               <input type="text" id="definetextarea" />
@@ -54,6 +56,29 @@
             <span id="define_status"></span>&nbsp;<a href="" class="help-toggle">But it doesn't work, I need help...</a>
           </div>
         </div>
+
+
+        <!-- new -->
+        <div class="define-area" id="rephrase_interface">
+          <div class="status">
+            <span class="reaction"><img class="emojione" alt=":rolling_eyes:" src="http://cdn.jsdelivr.net/emojione/assets/png/1f642.png"></span>
+            <span id="rephrase_header"></span>
+            <span class="remove-button close-console" id="close_rephrase">&times;</span>
+          </div>
+            <div class="input-group">
+              <input type="text" id="definetextarea" />
+              <div class="buttons-at-end">
+                <button type="hidden" class="enter-button" id="try_define">try</button>
+                <button type="hidden" class="accept-button" id="define_phrase_button">define</button>
+              </div>
+            </div>
+          <div class="examples">
+            <span id="rephrase_status"></span>&nbsp;<a href="" class="help-toggle">But it doesn't work, I need help...</a>
+          </div>
+        </div>
+        <!-- end new -->
+
+
         <div class="define-area" id="submit_interface">
           <div class="status">
             <span class="reaction"><img class="emojione" alt=":rolling_eyes:" src="http://cdn.jsdelivr.net/emojione/assets/png/1f642.png"></span>
@@ -72,6 +97,7 @@
             &nbsp; <span class="reaction" id="reaction"><img class="emojione" alt=":rolling_eyes:" src="http://cdn.jsdelivr.net/emojione/assets/png/1f644.png"></span>
             <div>
               <span id="currentcmd"><b>No command</b></span>, <span id="status">type one!</span>
+              <a class="hidden linky" id="rephrase_instead">rephrase?</a> 
             </div>
           </div>
           <div class="input-group" id="console_group">

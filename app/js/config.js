@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === "local") {
 
 configs.structsServer = "http://jonsson.stanford.edu:8410";
 configs.loggerServer = "http://jonsson.stanford.edu:8410";
-configs.loggerOn = true;
+configs.loggerOn = false;
 
 configs.debugMode = false;
 
@@ -40,11 +40,15 @@ configs.elems = {
   currSteps: "curr_steps",
   consoleGroup: "console_group",
   defineInterface: "define_interface",
+  rephraseInterface: "rephrase_interface",
   console: "console",
   defineConsole: "definetextarea",
   defineStatus: "define_status",
+  rephraseStatus: "rephrase_status",
+  rephraseHeader: "rephrase_header",
   defineHeader: "define_header",
   definePrompt: "define_prompt",
+  rephrasePrompt: "rephrase_prompt",
   structures: "structures",
   submitInterface: "submit_interface",
   submitConsole: "submittextarea",
@@ -59,6 +63,7 @@ configs.buttons = {
   paraphrase: "paraphrase",
   define: "define_phrase_button",
   define_instead: "define_instead",
+  rephrase_instead: "rephrase_instead",
   skip: "skip_button",
   reset: "reset_all_progress",
   toggleDefine: "toggledefine",
@@ -66,6 +71,7 @@ configs.buttons = {
   tryDefine: "try_define",
   rotateIcons: "rotate-icons",
   closeDefine: "close_define",
+  closeRephrase: "close_rephrase",
   submitButton: "submitbutton",
   submitStructure: "confirm_submit_structure",
   closeSubmit: "close_submit",

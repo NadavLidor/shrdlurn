@@ -179,6 +179,8 @@ export default class SempreClient {
       const mynbd = nbd;
       const key = JSON.stringify(nbest.value);
       mynbd[key] = this.combine(nbd[key], nbest);
+      // const key = nbest.value;
+      // mynbd[key] = this.combine(nbd[key], nbest);
       return mynbd;
     }, {});
 
