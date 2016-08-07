@@ -47,6 +47,7 @@ class App {
 
   updateEvent() {
     if ($("#eventId")[0].value == -1) return;
+    if (A.Game.currentStateEditable === false) return;
 
     console.log("before update:");
     console.log(this.Game.currentState);
@@ -83,6 +84,7 @@ class App {
   createEvent() {
     console.log("before update:");
     console.log(this.Game.currentState);
+    if (A.Game.currentStateEditable === false) return;
 
     let eventId = 0;
     const stateLength = this.Game.currentState.length;
@@ -185,9 +187,15 @@ class App {
   }
 
   closeDefineInterface() {
-    this.Setting.closeDefineInterface();
+    this.Setting.closeDefineInterface(this.Game);
     this.Game.defineSuccess = "";
     this.defineState = false;
+  }
+
+  cancelDefine() {
+    this.Game.currentState = this.Game.savedState;
+    this.Game.update();
+    this.closeDefineInterface();
   }
 
   closeRephraseInterface() {
@@ -439,7 +447,7 @@ document.getElementById(configs.buttons.define_instead).addEventListener("click"
 document.getElementById(configs.buttons.rephrase_instead).addEventListener("click", (e) => { e.preventDefault(); A.openRephraseInterface(); }, false);
 document.getElementById(configs.buttons.putBack).addEventListener("click", () => A.putBack(), false);
 document.getElementById(configs.elems.defineConsole).addEventListener("keydown", (e) => A.defining(e), false);
-document.getElementById(configs.buttons.closeDefine).addEventListener("click", () => A.closeDefineInterface());
+document.getElementById(configs.buttons.closeDefine).addEventListener("click", () => A.cancelDefine());
 document.getElementById(configs.buttons.closeRephrase).addEventListener("click", () => A.closeRephraseInterface());
 document.getElementById(configs.buttons.submitButton).addEventListener("click", () => A.openSubmit());
 document.getElementById(configs.buttons.closeSubmit).addEventListener("click", () => A.closeSubmit());
@@ -552,7 +560,6 @@ $(document).ready(function () {
     // defaultDate: '2014-06-12',
     defaultView: "agendaWeek",
     editable: true,
-    // ignoreTimezone: false,
     timezone: "UTC",
     events: [],
     eventClick(event, jsEvent, view) {
@@ -587,17 +594,8 @@ $(document).ready(function () {
       document.getElementById("eventLocation").value = event.location;
       document.getElementById("eventStart").value = moment.utc(event.start).format('YYYY-MM-DD hh:mm:ss a');
       document.getElementById("eventEnd").value = moment.utc(event.end).format('YYYY-MM-DD hh:mm:ss a');
-
       document.getElementById("eventRepeats").value = event.repeats;
-      // document.getElementById("eventRepeats").value = JSON.parse("[" + event.repeats + "]");
       document.getElementById("eventNames").value = event.names;
-
-      console.log("app resize");
-      console.log(typeof event.repeats);
-      // console.log(JSON.parse("[" + event.repeats + "]"));
-      // console.log(document.getElementById("eventRepeats").value);
-      console.log(typeof event.names);
-
       if (A.Game.currentStateEditable == true) {
         A.updateEvent();
       } else {
@@ -607,6 +605,13 @@ $(document).ready(function () {
 
     eventRender(event, element) {
       element.find(".fc-title").append("<br/>" + event.location);
+      element.bind('dblclick', function() {
+        // can select event only if in TEACH mode
+        if (A.Game.currentStateEditable == true) {
+          A.Game.currentState[event.id].names.push("S");
+          A.Game.update();
+        }
+      });
     },
 
   });

@@ -8,6 +8,7 @@ export default class Game {
     this.sessionId = configs.defaultSessionId;
     this.currentStateEditable = false;
     this.currentState = configs.defaultStruct;
+    this.savedState = configs.defaultStruct;
     this.responses = [];
     this.prevReponses = [];
     this.selectedResp = -1;
@@ -122,6 +123,7 @@ export default class Game {
       this.history.push({ query: this.query, type: "accept", state: this.currentState, stepN: this.getSteps() + 1, formula: this.responses[this.selectedResp].formula });
       this.resetResponses();
       this.update();
+      this.Setting.removePromptDefine();
       this.Setting.removeAccept();
       this.currentStateEditable = false;
     } else {
@@ -171,9 +173,10 @@ export default class Game {
   }
 
   submitCalendar() {
+
     this.currentStateEditable = false;
     this.querySempre("correct world state");
-    this.Setting.closeDefineInterface();
+    this.Setting.closeDefineInterface(this);
 
   }
 
@@ -242,7 +245,6 @@ export default class Game {
       this.Setting.status("↓: showing the next one", `${this.query} (#${this.selectedResp + 1}/${this.responses.length})`, this.responses[0].maxprop | -1);
       this.Logger.log({ type: "scroll", msg: "next" });
     } else {
-        this.currentStateEditable = true;
         this.Setting.status("↓: out of options, try to teach or ", `${this.query} (#${this.selectedResp + 1}/${this.responses.length})`, this.responses[0].maxprop | -1);
         this.Setting.promptDefine();
         this.Setting.promptRephrase();

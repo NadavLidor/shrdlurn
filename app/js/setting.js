@@ -97,6 +97,7 @@ export default class Setting {
         location : e.location,
         repeats : e.repeats,
         names : e.names,
+        borderColor : (contains.call(e.names, "S") ? "#000066" : ""),
         // dow: [2],
       }
     )))
@@ -305,9 +306,11 @@ export default class Setting {
 
   openDefineInterface(query, canAnswer, coverage, game) {
     
+    game.currentStateEditable = true;
     $('#eventDialog')[0].classList.remove('hidden');
     game.responses = [];
     game.update();
+    game.savedState = game.currentState.slice();
 
     document.getElementById("eventTitle").value = null;
     document.getElementById("eventLocation").value = null;
@@ -336,6 +339,28 @@ export default class Setting {
 
     document.getElementById(configs.elems.defineConsole).focus();
     return true;
+  }
+
+  closeDefineInterface(game) {
+    
+    $('#eventDialog')[0].classList.add('hidden');
+
+    const defineInterface = document.getElementById(configs.elems.defineInterface);
+    defineInterface.classList.remove("active");
+
+    const toggleButton = document.getElementById(configs.buttons.toggleDefine);
+    toggleButton.innerHTML = "Define";
+
+    document.querySelector('#define_interface .input-group').classList.remove("accepting");
+
+    this.removePromptDefine();
+
+    const consoleElem = document.getElementById(configs.elems.console);
+    consoleElem.focus();
+
+    // revert changes to current state
+    game.currentStateEditable = false;
+
   }
 
   openRephraseInterface(query, canAnswer, coverage, game) {
@@ -382,23 +407,6 @@ export default class Setting {
     consoleElem.focus();
   }
 
-  closeDefineInterface() {
-    
-    $('#eventDialog')[0].classList.add('hidden');
-
-    const defineInterface = document.getElementById(configs.elems.defineInterface);
-    defineInterface.classList.remove("active");
-
-    const toggleButton = document.getElementById(configs.buttons.toggleDefine);
-    toggleButton.innerHTML = "Define";
-
-    document.querySelector('#define_interface .input-group').classList.remove("accepting");
-
-    this.removePromptDefine();
-
-    const consoleElem = document.getElementById(configs.elems.console);
-    consoleElem.focus();
-  }
 
   tryDefine(query, refineDefine, canAnswer, coverage = [], commandResponse = [], oldQuery = "") {
     const defineHeader = document.getElementById(configs.elems.defineHeader);
@@ -566,3 +574,30 @@ tryRephrase(query, refineDefine, canAnswer, coverage = [], commandResponse = [],
     this.rotational = parseInt(rotation, 10);
   }
 }
+
+var contains = function(needle) {
+    // Per spec, the way to identify NaN is that it is not equal to itself
+    var findNaN = needle !== needle;
+    var indexOf;
+
+    if(!findNaN && typeof Array.prototype.indexOf === 'function') {
+        indexOf = Array.prototype.indexOf;
+    } else {
+        indexOf = function(needle) {
+            var i = -1, index = -1;
+
+            for(i = 0; i < this.length; i++) {
+                var item = this[i];
+
+                if((findNaN && item !== item) || item === needle) {
+                    index = i;
+                    break;
+                }
+            }
+
+            return index;
+        };
+    }
+
+    return indexOf.call(this, needle) > -1;
+};
