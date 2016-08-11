@@ -17,9 +17,9 @@ export default class Game {
     this.taggedCover = "";
     this.defineSuccess = "";
 
-    this.targetStruct = configs.defaultStruct;
-    this.targetIdx = -1;
-    this.maxTargetSteps = 0;
+    // this.targetStruct = configs.defaultStruct;
+    // this.targetIdx = -1;
+    // this.maxTargetSteps = 0;
     this.skipsLeft = configs.defaultSkips;
 
     this.Sempre = sempreClient;
@@ -36,20 +36,20 @@ export default class Game {
     }
   }
 
-  setTarget(targetStruct) {
-    this.targetIdx = targetStruct[0];
-    this.targetStruct = targetStruct[2];
-    this.maxTargetSteps = targetStruct[1] * configs.difficulty;
+  // setTarget(targetStruct) {
+  //   this.targetIdx = targetStruct[0];
+  //   this.targetStruct = targetStruct[2];
+  //   this.maxTargetSteps = targetStruct[1] * configs.difficulty;
 
-    this.Setting.renderTarget(this.targetStruct);
-    this.Setting.setSteps(targetStruct[1], this.maxTargetSteps);
+  //   this.Setting.renderTarget(this.targetStruct);
+  //   this.Setting.setSteps(targetStruct[1], this.maxTargetSteps);
 
-    this.Logger.log({ type: "setTarget", msg: { target: this.targetStruct, targetIdx: this.targetIdx } });
-  }
+  //   this.Logger.log({ type: "setTarget", msg: { target: this.targetStruct, targetIdx: this.targetIdx } });
+  // }
 
-  updateTarget() {
-    this.Setting.renderTarget(this.targetStruct);
-  }
+  // updateTarget() {
+  //   this.Setting.renderTarget(this.targetStruct);
+  // }
 
   enter(query) {
     if (query.length === 0) this.Setting.status("enter a command");
@@ -65,8 +65,8 @@ export default class Game {
       const currentState = JSON.stringify(JSON.stringify(this.currentState.map(c => ([
         c.title, 
         c.location, //TODO here!!!!!!
-        c.start.format('YYYY-MM-DDTHH:mm:ss'), 
-        c.end.format('YYYY-MM-DDTHH:mm:ss'), 
+        c.start.format('YYYY-MM-DDTHH:mm'), 
+        c.end.format('YYYY-MM-DDTHH:mm'), 
         c.repeats,
         c.names
         ]))));
@@ -109,12 +109,65 @@ export default class Game {
     });
   }
 
+  submitAnswerSempre() {
+    // const query = this.Sempre.formatQuery(querystr);
+    var contextCommand = "(answer)";
+    if (this.currentState) {
+      const currentState = JSON.stringify(JSON.stringify(this.currentState.map(c => ([
+        c.title, 
+        c.location,
+        c.start.format('YYYY-MM-DDTHH:mm'), 
+        c.end.format('YYYY-MM-DDTHH:mm'), 
+        c.repeats,
+        c.names
+        ]))));
+      contextCommand = `(answer (string ${currentState}))`;
+      console.log("currentState submitted: " + currentState);
+    }
+    
+    const contextCmds = { q: contextCommand, sessionId: this.sessionId };
+
+    this.Sempre.query(contextCmds, () => {
+      // const cmds = { q: query, sessionId: this.sessionId };
+      // this.Sempre.query(cmds, (response) => {
+      //   this.taggedCover = response.taggedcover;
+
+      //   const formval = this.Sempre.parseSEMPRE(response.candidates);
+      //   if (formval === null || formval === undefined) {
+      //     console.log("no answer from sempre");
+      //     this.resetResponses();
+      //     this.query = query;
+      //     this.Setting.status("SHRDLURN did not understand", query);
+      //     this.Setting.promptDefine();
+      //     this.Setting.promptRephrase();
+      //     this.Logger.log({ type: "queryUnknown", msg: { query: query } });
+      //     this.Setting.promptAccept();
+      //   } else {
+      //     this.Setting.removePromptDefine();
+      //     this.responses = formval;
+      //     this.selectedResp = 0;
+      //     this.query = query;
+      //     this.Setting.status(`got ${this.responses.length} options, use &darr; and &uarr; to scroll, and accept to confirm.`, `${query} (#1/${this.responses.length})`, this.responses[0].maxprop | -1);
+      //     this.Logger.log({ type: "query", msg: { query: query } });
+      //     this.Setting.promptAccept();
+      //   }
+
+      //   if (configs.debugMode) {
+      //     console.log(response);
+      //   }
+
+      //   this.update();
+      // });
+    });
+  }
+
   accept() {
-    if (this.getSteps() >= this.maxTargetSteps) {
-      this.Setting.status("you've reached the maxinum number of steps", "can't accept");
-      this.Logger.log({ type: "meta", msg: "max steps reached" });
-      this.Setting.removeAccept();
-    } else if (this.responses.length > 0) {
+    // if (this.getSteps() >= this.maxTargetSteps) {
+    //   this.Setting.status("you've reached the maxinum number of steps", "can't accept");
+    //   this.Logger.log({ type: "meta", msg: "max steps reached" });
+    //   this.Setting.removeAccept();
+    // } else 
+    if (this.responses.length > 0) {
       this.Sempre.query({ q: this.query, accept: this.responses[this.selectedResp].rank, sessionId: this.sessionId }, () => {});
 
       this.currentState = this.responses[this.selectedResp].value;
@@ -135,22 +188,22 @@ export default class Game {
     }
   }
 
-  win() {
-    const usedTargets = getStore("usedTargetsv1", []);
-    usedTargets.push(this.targetIdx);
-    setStore("usedTargetsv1", usedTargets);
-    this.Logger.log({ type: "win", msg: { targetIdx: this.targetIdx, nSteps: this.getSteps(), history: this.history.map(h => ([h.query, h.formula])) } });
+  // win() {
+  //   const usedTargets = getStore("usedTargetsv1", []);
+  //   usedTargets.push(this.targetIdx);
+  //   setStore("usedTargetsv1", usedTargets);
+  //   this.Logger.log({ type: "win", msg: { targetIdx: this.targetIdx, nSteps: this.getSteps(), history: this.history.map(h => ([h.query, h.formula])) } });
 
-    if (process.env.NODE_ENV === "turk" || process.env.NODE_ENV === "turkproduction") {
-      const turkcode = getTurkCode(`v1,${this.targetIdx}`, this.getSteps(), this.currentState);
-      alert(`Congratulations! You have successfully completed the task. Please copy this confirmation code and submit it to complete the hit: ${turkcode}`);
-    } else {
-      alert("You've did it! Congratulations! You've made the target! Try another one now.");
-    }
+  //   if (process.env.NODE_ENV === "turk" || process.env.NODE_ENV === "turkproduction") {
+  //     const turkcode = getTurkCode(`v1,${this.targetIdx}`, this.getSteps(), this.currentState);
+  //     alert(`Congratulations! You have successfully completed the task. Please copy this confirmation code and submit it to complete the hit: ${turkcode}`);
+  //   } else {
+  //     alert("You've did it! Congratulations! You've made the target! Try another one now.");
+  //   }
 
-    this.setTarget(this.getRandomTarget());
-    this.clear();
-  }
+  //   this.setTarget(this.getRandomTarget());
+  //   this.clear();
+  // }
 
   resetResponses() {
     this.selectedResp = -1;
@@ -164,7 +217,9 @@ export default class Game {
     let afterStruct = this.currentState;
     if (this.responses.length > 0) {
       afterStruct = this.responses[this.selectedResp].value;
+      console.log("formula: " + this.responses[this.selectedResp].formula);
     }
+    console.log("afterStruct: " + afterStruct);
     this.Setting.renderCanvas(afterStruct);
 
     /* Update the history */
@@ -175,7 +230,8 @@ export default class Game {
   submitCalendar() {
 
     this.currentStateEditable = false;
-    this.querySempre("correct world state");
+    this.submitAnswerSempre();
+    // this.Sempre.query({ answer: this.currentState.value, sessionId: this.sessionId }, () => {});
     this.Setting.closeDefineInterface(this);
 
   }

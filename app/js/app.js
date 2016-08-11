@@ -27,16 +27,16 @@ class App {
 
     this.updateRandomUtterances();
 
-    this.generateTarget();
+    // this.generateTarget();
 
     this.consoleElem.focus();
   }
 
-  generateTarget() {
-    /* Generate Target at Random */
-    this.Game.setTarget(this.Game.getRandomTarget());
-    this.setupAutocomplete();
-  }
+  // generateTarget() {
+  //   /* Generate Target at Random */
+  //   this.Game.setTarget(this.Game.getRandomTarget());
+  //   this.setupAutocomplete();
+  // }
 
   submitCalendar() {
     console.log("submitCalendar");
@@ -513,7 +513,7 @@ window.onkeydown = (e) => {
       break;
     case Hotkeys.SHIFTENTER:
       e.preventDefault();
-      if (A.defineState) { A.enter(); break; }
+      if (A.defineState) { A.submitCalendar(); break; }
       A.accept();
       break;
     case Hotkeys.ENTER:
@@ -561,6 +561,8 @@ $(document).ready(function () {
     defaultView: "agendaWeek",
     editable: true,
     timezone: "UTC",
+    now: moment.utc(),
+    nowIndicator: true,
     events: [],
     eventClick(event, jsEvent, view) {
       document.getElementById("eventId").value = event.id;
