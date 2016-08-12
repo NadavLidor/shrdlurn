@@ -52,8 +52,11 @@ export default class Game {
   // }
 
   enter(query) {
-    if (query.length === 0) this.Setting.status("enter a command");
-    // TODO: Validate length!
+    if (query.length === 0) {
+      // TODO: Validate length!
+      this.Setting.status("");
+      return;
+    }
     this.querySempre(query);
   }
 
@@ -85,7 +88,7 @@ export default class Game {
           console.log("no answer from sempre");
           this.resetResponses();
           this.query = query;
-          this.Setting.status("SHRDLURN did not understand", query);
+          this.Setting.status("CADLURN did not understand", query);
           this.Setting.promptDefine();
           this.Setting.promptRephrase();
           this.Logger.log({ type: "queryUnknown", msg: { query: query } });
@@ -183,9 +186,9 @@ export default class Game {
       this.Setting.status("✓: can't accept nothing, say something first");
     }
 
-    if (this.Setting.equalityCheck(this.currentState, this.targetStruct)) {
-      this.win();
-    }
+    // if (this.Setting.equalityCheck(this.currentState, this.targetStruct)) {
+      // this.win();
+    // }
   }
 
   // win() {
@@ -231,8 +234,11 @@ export default class Game {
 
     this.currentStateEditable = false;
     this.submitAnswerSempre();
+    // this.resetResponses();
+    // document.getElementById(configs.elems.console).value = "";
     // this.Sempre.query({ answer: this.currentState.value, sessionId: this.sessionId }, () => {});
     this.Setting.closeDefineInterface(this);
+    this.Setting.status("definition accepted. thanks for teaching!");
 
   }
 

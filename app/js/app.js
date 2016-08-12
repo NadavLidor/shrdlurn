@@ -41,7 +41,6 @@ class App {
   submitCalendar() {
     console.log("submitCalendar");
     this.Game.submitCalendar();
-    this.Setting
     this.closeDefineInterface();
   }
 
@@ -81,6 +80,34 @@ class App {
     console.log(this.Game.currentState);
   }
 
+  deleteEvent() {
+    if ($("#eventId")[0].value == -1) return;
+    if (A.Game.currentStateEditable === false) return;
+
+    const id = $("#eventId")[0].value;
+
+    for (let i = 0; i < this.Game.currentState.length; i++) {
+      if (this.Game.currentState[i].id == id) {
+        this.Game.currentState.splice(i, 1);
+      }
+    }
+
+    document.getElementById("eventId").value = null;
+    document.getElementById("eventTitle").value = null;
+    document.getElementById("eventLocation").value = null;
+    document.getElementById("eventStart").value = null;
+    document.getElementById("eventEnd").value = null;
+    document.getElementById("eventRepeats").value = null;
+    document.getElementById("eventNames").value = null;
+
+    document.getElementById("cardHeader").innerHTML = 'Add Event';
+    $("#updateDiv").hide();
+    $("#deleteDiv").hide();
+    $("#createDiv").show();
+
+    this.Game.update();
+  }
+
   createEvent() {
     console.log("before update:");
     console.log(this.Game.currentState);
@@ -112,6 +139,8 @@ class App {
     document.getElementById("eventLocation").value = null;
     document.getElementById("eventStart").value = null;
     document.getElementById("eventEnd").value = null;
+    document.getElementById("eventRepeats").value = null;
+    document.getElementById("eventNames").value = null;
 
     this.Game.currentState.push(newEvent);
     this.Game.update();
@@ -125,22 +154,23 @@ class App {
       this.submitStruct();
       return;
     }
-
     if (this.defineState) {
-      // TODO: Validate define length!
-      const defined = this.Game.define(this.defineElem.value);
-      if (defined) {
-        this.defineState = false;
-        this.defineElem.value = "";
-        this.Setting.closeDefineInterface();
-        this.consoleElem.value = defined;
-        this.consoleElem.focus();
-      }
 
-      this.watchOutForDefine = true;
-      return;
+      this.Game.enter(this.defineElem.value);
+        
+        const rephraseHeader = document.getElementById(configs.elems.rephraseHeader);
+        rephraseHeader.innerHTML = "Showing new results for this";
+        this.closeRephraseInterface();
+      //   this.defineState = false;
+      //   this.defineElem.value = "";
+      //   this.Setting.closeDefineInterface();
+      //   this.consoleElem.value = defined;
+      //   this.consoleElem.focus();
+      // }
+
+      // this.watchOutForDefine = true;
+      // return;
     }
-
     if (this.activeHistoryElem > 0) {
       const historyElems = getHistoryElems();
       this.Game.history = this.Game.history.slice(0, historyElems.length - this.activeHistoryElem);
@@ -149,7 +179,7 @@ class App {
 
     this.Game.enter(this.consoleElem.value);
 
-    this.updateRandomUtterances();
+    // this.updateRandomUtterances();
   }
 
   accept() {
@@ -196,10 +226,10 @@ class App {
     this.Game.currentState = this.Game.savedState;
     this.Game.update();
     this.closeDefineInterface();
+    this.Setting.status("");
   }
 
   closeRephraseInterface() {
-    console.log("hello");
     this.Setting.closeRephraseInterface();
     this.Game.defineSuccess = "";
     this.defineState = false;
@@ -549,6 +579,27 @@ window.onkeydown = (e) => {
   }
 };
 
+$(document).click(function(event) { 
+    if(!$(event.target).closest('#mycalendar').length) {
+      if(!$(event.target).closest('#eventDialog').length) {
+        document.getElementById("cardHeader").innerHTML = 'Add Event';
+        $("#updateDiv").hide();
+        $("#deleteDiv").hide();
+        $("#createDiv").show();
+        document.getElementById("eventId").value = null;
+        document.getElementById("eventTitle").value = null;
+        document.getElementById("eventLocation").value = null;
+        document.getElementById("eventStart").value = null;
+        document.getElementById("eventEnd").value = null;
+        document.getElementById("eventRepeats").value = null;
+        document.getElementById("eventNames").value = null;
+          // if($('#mycalendar').is(":visible")) {
+              // $('#mycalendar').hide();
+          // }
+      }
+    }        
+})
+
 $(document).ready(function () {
   $("#mycalendar").fullCalendar({
     height: 500,
@@ -572,6 +623,10 @@ $(document).ready(function () {
       document.getElementById("eventEnd").value = moment.utc(event.end).format("YYYY-MM-DD hh:mm:ss a");
       document.getElementById("eventRepeats").value = event.repeats;
       document.getElementById("eventNames").value = event.names;
+      $("#updateDiv").show();
+      $("#deleteDiv").show();
+      $("#createDiv").hide();
+      document.getElementById("cardHeader").innerHTML = 'Edit/Delete Event';
     },
 
     eventDrop(event, delta, revertFunc) {
@@ -621,6 +676,7 @@ $(document).ready(function () {
   document.getElementById("submitCalendar").addEventListener("click", () => A.submitCalendar(), false);
   document.getElementById("updateEvent").addEventListener("click", () => A.updateEvent(), false);
   document.getElementById("createEvent").addEventListener("click", () => A.createEvent(), false);
+  document.getElementById("deleteEvent").addEventListener("click", () => A.deleteEvent(), false);
 
   const Picker_start = new Pikaday({ field: $("#eventStart")[0], format: "YYYY-MM-DD hh:mm:ss a" });
   const Picker_end = new Pikaday({ field: $("#eventEnd")[0], format: "YYYY-MM-DD hh:mm:ss a" });

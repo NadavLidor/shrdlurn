@@ -68,8 +68,8 @@
             <div class="input-group">
               <input type="text" id="definetextarea" />
               <div class="buttons-at-end">
-                <button type="hidden" class="enter-button" id="try_define">try</button>
-                <button type="hidden" class="accept-button" id="define_phrase_button">define</button>
+                <button type="hidden" class="enter-button" id="dobutton">rephrase</button>
+                <!-- <button type="hidden" class="accept-button" id="define_phrase_button">define</button> -->
               </div>
             </div>
           <div class="examples">
@@ -124,8 +124,8 @@
       <div class="panel">
         <div id="eventDialog" class="event-dialog target card hidden">
           <form>
-            <div class="card-header">
-              Add/Edit Event
+            <div class="card-header" id="cardHeader">
+              Add Event
             </div>
             <div class="event-form">
                 <input type="hidden" id="eventId">
@@ -137,11 +137,14 @@
                 <input type="text" id="eventEnd" data-field="datetime" placeholder="end time">
             </div>
             <div class="target-footer">
-              <div>
+              <div id="updateDiv">
                 <button type="button" class="enter-button" id="updateEvent">update event</button>
               </div>
-              <div>
+              <div id="createDiv">
                 <button type="button" class="enter-button" id="createEvent">new event</button>
+              </div>
+              <div id="deleteDiv">
+                <button type="button" class="enter-button" id="deleteEvent">delete</button>
               </div>
             </div>
           </form>

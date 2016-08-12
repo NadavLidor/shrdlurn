@@ -1458,6 +1458,16 @@ button {
   border-radius: 5px;
 }
 
+.rephrase-area {
+  margin: 0 auto;
+  width: 90%;
+}
+
+.rephrase-area {
+  background-color: rgba(60, 60, 60, 0.08);
+  padding: 10px;
+  border-radius: 5px;
+}
 
 .input-group {
   width: 100%;
@@ -1566,7 +1576,20 @@ button {
   }
 }
 
+.rephrase-area {
+  display: none;
+  position: relative;
+
+  &.active {
+    display: block;
+  }
+}
+
 .define-area.active ~ .console-area {
+  display: none;
+}
+
+.rephrase-area.active ~ .console-area {
   display: none;
 }
 
@@ -1728,6 +1751,11 @@ button {
 }
 
 #define_header {
+  font-weight: 900;
+  padding-right: 50px;
+}
+
+#rephrase_header {
   font-weight: 900;
   padding-right: 50px;
 }

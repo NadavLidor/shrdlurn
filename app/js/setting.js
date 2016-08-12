@@ -334,6 +334,7 @@ export default class Setting {
     toggleButton.innerHTML = "Return";
 
     this.removePromptDefine();
+    this.removePromptRephrase();
 
     this.tryDefine(query, false, canAnswer, coverage);
 
@@ -357,6 +358,9 @@ export default class Setting {
 
     const consoleElem = document.getElementById(configs.elems.console);
     consoleElem.focus();
+
+    game.resetResponses();
+    document.getElementById(configs.elems.console).value = "";
 
     // revert changes to current state
     game.currentStateEditable = false;
@@ -384,6 +388,7 @@ export default class Setting {
     toggleButton.innerHTML = "Return";
 
     this.removePromptDefine();
+    this.removePromptRephrase();
 
     this.tryRephrase(query, false, canAnswer, coverage);
 
@@ -401,7 +406,7 @@ export default class Setting {
 
     document.querySelector('#define_interface .input-group').classList.remove("accepting");
 
-    this.removePromptDefine();
+    this.removePromptRephrase();
 
     const consoleElem = document.getElementById(configs.elems.console);
     consoleElem.focus();
@@ -413,67 +418,74 @@ export default class Setting {
     document.getElementById(configs.elems.definePrompt).classList.add("hidden");
     document.querySelector('#define_interface .input-group').classList.remove("accepting");
 
-    if (!refineDefine) {
-      if (canAnswer) {
-        defineHeader.innerHTML = `Already understand ${query}, teach another meaning?`;
-      } else {
-        defineHeader.innerHTML = `Didn't understand "${this.intelHighlight(coverage)}". Please teach CADLUN by changing the calendar.`;
-      }
-    } else {
-      if (canAnswer) {
-        defineHeader.innerHTML = `SHRDLURN understands the definition, "${query}". If this is correct, click "define" to submit the definition.`;
-        document.querySelector('#define_interface .input-group').classList.add("accepting");
-      } else {
-        defineHeader.innerHTML = `Still don't understand "${this.intelHighlight(coverage)}". Please rephrase:`;
-      }
 
-      // Special Statuses
-      if (commandResponse.length > 0) {
-        const defCore = commandResponse.indexOf("Core") !== -1;
-        const defNoCover = commandResponse.indexOf("NoCover") !== -1;
-        if (defCore) {
-          // updateStatus("cannot redefine the core language!");
-          defineHeader.innerHTML = `"${oldQuery}" is precisely understood, and cannot be redefined by "${this.intelHighlight(coverage)}".`;
-        } else if (defNoCover) {
-          // updateStatus("SHRDLRUN cannot learn from this definition");
-          defineHeader.innerHTML = `Nothing (colors, numbers, etc) in "${this.intelHighlight(coverage)}" matches "${oldQuery}", so SHRDLURN cannot learn from this.`;
-        }
-      }
-    }
+    defineHeader.innerHTML = `Please teach CADLURN the meaning of "${this.intelHighlight(coverage)}" by changing the calendar. Click Submit when done.`;
+
+    // if (!refineDefine) {
+    //   if (canAnswer) {
+    //     defineHeader.innerHTML = `Already understand ${query}, teach another meaning?`;
+    //   } else {
+    //     defineHeader.innerHTML = `Didn't understand "${this.intelHighlight(coverage)}". Please teach CADLUN by changing the calendar.`;
+    //   }
+    // } else {
+    //   if (canAnswer) {
+    //     defineHeader.innerHTML = `SHRDLURN understands the definition, "${query}". If this is correct, click "define" to submit the definition.`;
+    //     document.querySelector('#define_interface .input-group').classList.add("accepting");
+    //   } else {
+    //     defineHeader.innerHTML = `Still don't understand "${this.intelHighlight(coverage)}". Please rephrase:`;
+    //   }
+
+      // // Special Statuses
+      // if (commandResponse.length > 0) {
+      //   const defCore = commandResponse.indexOf("Core") !== -1;
+      //   const defNoCover = commandResponse.indexOf("NoCover") !== -1;
+      //   if (defCore) {
+      //     // updateStatus("cannot redefine the core language!");
+      //     defineHeader.innerHTML = `"${oldQuery}" is precisely understood, and cannot be redefined by "${this.intelHighlight(coverage)}".`;
+      //   } else if (defNoCover) {
+      //     // updateStatus("SHRDLRUN cannot learn from this definition");
+      //     defineHeader.innerHTML = `Nothing (colors, numbers, etc) in "${this.intelHighlight(coverage)}" matches "${oldQuery}", so SHRDLURN cannot learn from this.`;
+      //   }
+      // }
+    // }
   }
 
 tryRephrase(query, refineDefine, canAnswer, coverage = [], commandResponse = [], oldQuery = "") {
     const rephraseHeader = document.getElementById(configs.elems.rephraseHeader);
     document.getElementById(configs.elems.definePrompt).classList.add("hidden");
     document.querySelector('#define_interface .input-group').classList.remove("accepting");
+    // rephraseHeader.innerHTML = `Already understand ${query}, teach another meaning TODO?`;
 
-    if (!refineDefine) {
-      if (canAnswer) {
-        rephraseHeader.innerHTML = `Already understand ${query}, teach another meaning TODO?`;
-      } else {
-        rephraseHeader.innerHTML = `Didn't understand "${this.intelHighlight(coverage)}". Try to say the same thing differently:`;
-      }
-    } else {
-      if (canAnswer) {
-        rephraseHeader.innerHTML = `SHRDLURN understands the definition, "${query}". If this is correct, click "define" to submit the definition.`;
-        document.querySelector('#define_interface .input-group').classList.add("accepting");
-      } else {
-        rephraseHeader.innerHTML = `Still don't understand "${this.intelHighlight(coverage)}". Please rephrase:`;
-      }
+    rephraseHeader.innerHTML = `Please teach CADLURN the meaning of "${this.intelHighlight(coverage)}" by rephrasing your statement. Click Rephrase when done.`;
+    // defineHeader.innerHTML = `Didn't understand "${this.intelHighlight(coverage)}". Please teach CADLUN by changing the calendar.`;
 
-      // Special Statuses
-      if (commandResponse.length > 0) {
-        const defCore = commandResponse.indexOf("Core") !== -1;
-        const defNoCover = commandResponse.indexOf("NoCover") !== -1;
-        if (defCore) {
-          // updateStatus("cannot redefine the core language!");
-          rephraseHeader.innerHTML = `"${oldQuery}" is precisely understood, and cannot be redefined by "${this.intelHighlight(coverage)}".`;
-        } else if (defNoCover) {
-          // updateStatus("SHRDLRUN cannot learn from this definition");
-          rephraseHeader.innerHTML = `Nothing (colors, numbers, etc) in "${this.intelHighlight(coverage)}" matches "${oldQuery}", so SHRDLURN cannot learn from this.`;
-        }
-      }
-    }
+    // if (!refineDefine) {
+    //   if (canAnswer) {
+    //     rephraseHeader.innerHTML = `Already understand ${query}, teach another meaning TODO?`;
+    //   } else {
+    //     rephraseHeader.innerHTML = `Didn't understand "${this.intelHighlight(coverage)}". Try to say the same thing differently:`;
+    //   }
+    // } else { 
+    //   if (canAnswer) {
+    //     rephraseHeader.innerHTML = `SHRDLURN understands the definition, "${query}". If this is correct, click "define" to submit the definition.`;
+    //     document.querySelector('#define_interface .input-group').classList.add("accepting");
+    //   } else {
+    //     rephraseHeader.innerHTML = `Still don't understand "${this.intelHighlight(coverage)}". Please rephrase:`;
+    //   }
+
+      // // Special Statuses
+      // if (commandResponse.length > 0) {
+      //   const defCore = commandResponse.indexOf("Core") !== -1;
+      //   const defNoCover = commandResponse.indexOf("NoCover") !== -1;
+      //   if (defCore) {
+      //     // updateStatus("cannot redefine the core language!");
+      //     rephraseHeader.innerHTML = `"${oldQuery}" is precisely understood, and cannot be redefined by "${this.intelHighlight(coverage)}".`;
+      //   } else if (defNoCover) {
+      //     // updateStatus("SHRDLRUN cannot learn from this definition");
+      //     rephraseHeader.innerHTML = `Nothing (colors, numbers, etc) in "${this.intelHighlight(coverage)}" matches "${oldQuery}", so SHRDLURN cannot learn from this.`;
+      //   }
+      // }
+    // }
   }
 
   intelHighlight(coverage) {
@@ -537,12 +549,16 @@ tryRephrase(query, refineDefine, canAnswer, coverage = [], commandResponse = [],
     document.getElementById(configs.elems.definePrompt).classList.remove("hidden");
   }
 
+  removePromptDefine() {
+    document.getElementById(configs.elems.definePrompt).classList.add("hidden");
+  }
+
   promptRephrase() {
     document.getElementById(configs.buttons.rephrase_instead).classList.remove("hidden");
   }
 
-  removePromptDefine() {
-    document.getElementById(configs.elems.definePrompt).classList.add("hidden");
+  removePromptRephrase() {
+    document.getElementById(configs.buttons.rephrase_instead).classList.add("hidden");
   }
 
   setSkips(skipsLeft) {
