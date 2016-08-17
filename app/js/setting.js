@@ -4,6 +4,7 @@ import { getHistoryElems, emojione } from "./util";
 
 export default class Setting {
   constructor() {
+    // this.renderCanvas(configs.defaultStruct, []);
     this.renderCanvas(configs.defaultStruct);
   }
 
@@ -11,9 +12,9 @@ export default class Setting {
     // pass
   }
 
-  renderCanvas(state) {
+  renderCanvas(previousState, newState) {
 
-    this.renderCalendar(state);
+    this.renderCalendar(previousState, newState);
 
     // this.renderGrid(this.iso);
     // this.renderBlocks(this.iso, state);
@@ -79,9 +80,10 @@ export default class Setting {
     }
   }
 
+  // renderCalendar(previousState, newState) {
   renderCalendar(state) {
 
-    console.log("state:");
+    console.log("setting renderCalendar: " + moment().format("YYYY-MM-DD hh:mm:ss"));
     console.log(state);
 
     // remove all events
@@ -101,6 +103,36 @@ export default class Setting {
         // dow: [2],
       }
     )))
+
+    // // add new events
+    // $('#mycalendar').fullCalendar('addEventSource', previousState.map((e) => (
+    //   {
+    //     id: e.id,
+    //     title: e.title,
+    //     start: e.start,
+    //     end: e.end,
+    //     location : e.location,
+    //     repeats : e.repeats,
+    //     names : e.names,
+    //     borderColor : (contains.call(e.names, "S") ? "#000066" : ""),
+    //     // dow: [2],
+    //   }
+    // )))
+
+    // $('#mycalendar').fullCalendar('addEventSource', newState.map((e) => (
+    //   {
+    //     id: e.id,
+    //     title: e.title,
+    //     start: e.start,
+    //     end: e.end,
+    //     location : e.location,
+    //     repeats : e.repeats,
+    //     names : e.names,
+    //     borderColor : (contains.call(e.names, "S") ? "#000066" : ""),
+    //     backgroundColor: "rgba(58,135,173,0.5)",
+    //     // dow: [2],
+    //   }
+    // )))
 
     // $('#mycalendar').fullCalendar( 'rerenderEvents' );
 
@@ -365,6 +397,7 @@ export default class Setting {
     // revert changes to current state
     game.currentStateEditable = false;
 
+
   }
 
   openRephraseInterface(query, canAnswer, coverage, game) {
@@ -372,6 +405,7 @@ export default class Setting {
     game.prevReponses = game.responses;
     game.responses = [];
     game.update();
+    game.savedState = game.currentState.slice();
 
     if (query.length === 0) {
       this.status("nothing to rephrase");
@@ -396,7 +430,9 @@ export default class Setting {
     return true;
   }
 
-  closeRephraseInterface() {
+  closeRephraseInterface(game) {
+
+    // $('#eventDialog')[0].classList.add('hidden'); // not needed
 
     const rephraseInterface = document.getElementById(configs.elems.rephraseInterface);
     rephraseInterface.classList.remove("active");
@@ -404,12 +440,19 @@ export default class Setting {
     const toggleButton = document.getElementById(configs.buttons.toggleDefine);
     toggleButton.innerHTML = "Define";
 
-    document.querySelector('#define_interface .input-group').classList.remove("accepting");
-
-    this.removePromptRephrase();
+    document.querySelector('#rephrase_interface .input-group').classList.remove("accepting");
 
     const consoleElem = document.getElementById(configs.elems.console);
     consoleElem.focus();
+
+    game.resetResponses();
+    document.getElementById(configs.elems.console).value = "";
+
+    this.status("type one!");
+
+    // revert changes to current state
+    // game.currentStateEditable = false; // not needed
+
   }
 
 
@@ -456,7 +499,7 @@ tryRephrase(query, refineDefine, canAnswer, coverage = [], commandResponse = [],
     document.querySelector('#define_interface .input-group').classList.remove("accepting");
     // rephraseHeader.innerHTML = `Already understand ${query}, teach another meaning TODO?`;
 
-    rephraseHeader.innerHTML = `Please teach CADLURN the meaning of "${this.intelHighlight(coverage)}" by rephrasing your statement. Click Rephrase when done.`;
+    rephraseHeader.innerHTML = `Please teach the meaning of "${this.intelHighlight(coverage)}" by rephrasing your statement. Click Rephrase when done.`;
     // defineHeader.innerHTML = `Didn't understand "${this.intelHighlight(coverage)}". Please teach CADLUN by changing the calendar.`;
 
     // if (!refineDefine) {

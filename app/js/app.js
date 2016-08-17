@@ -7,6 +7,7 @@ import Sempre from "./sempre";
 import { getHistoryElems, resetStore } from "./util";
 
 import Pikaday from "pikaday-time";
+// import Pikaday from "pikaday";
 
 class App {
   constructor() {
@@ -16,6 +17,7 @@ class App {
     this.consoleElem = document.getElementById(configs.consoleElemId);
     this.defineElem = document.getElementById(configs.defineElemId);
     this.defineState = false;
+    this.rephraseState = false;
     this.activeHistoryElem = -1;
     this.awesomplete = {};
     this.helpOn = false;
@@ -50,21 +52,17 @@ class App {
 
     console.log("before update:");
     console.log(this.Game.currentState);
+    console.log($("#eventNames")[0].value);
 
     const newEvent = {
       id: $("#eventId")[0].value,
       title: $("#eventTitle")[0].value,
       location: $("#eventLocation")[0].value,
-      start: moment.utc($("#eventStart")[0].value, 'YYYY-MM-DD hh:mm:ss a'),
-      end: moment.utc($("#eventEnd")[0].value, 'YYYY-MM-DD hh:mm:ss a'),
+      start: moment.utc($("#eventStart")[0].value, 'YYYY-MM-DD hh:mm a'),
+      end: moment.utc($("#eventEnd")[0].value, 'YYYY-MM-DD hh:mm a'),
       repeats: JSON.parse("[" + $("#eventRepeats")[0].value + "]"),
-      names: JSON.parse("[" + $("#eventNames")[0].value + "]"),
+      names: JSON.parse("[" + JSON.stringify($("#eventNames")[0].value) + "]"),
     }
-
-
-      console.log("app updateEvent");
-      console.log(typeof $("#eventRepeats")[0].value);
-      console.log(typeof $("#eventNames")[0].value);
 
     // this.Game.currentState = [newEvent,newEvent,newEvent];
 
@@ -101,36 +99,39 @@ class App {
     document.getElementById("eventNames").value = null;
 
     document.getElementById("cardHeader").innerHTML = 'Add Event';
-    $("#updateDiv").hide();
-    $("#deleteDiv").hide();
+    $("#editDiv").hide();
     $("#createDiv").show();
+    $('#eventDialog').css("height","100px");
 
     this.Game.update();
   }
 
   createEvent() {
-    console.log("before update:");
-    console.log(this.Game.currentState);
     if (A.Game.currentStateEditable === false) return;
 
     let eventId = 0;
     const stateLength = this.Game.currentState.length;
     if (stateLength > 0) { eventId = this.Game.currentState[stateLength - 1].id + 1; }
-    console.log("eventID: ");
-    console.log(eventId);
 
-    console.log($("#eventStart")[0].value);
+    let start_time = moment.utc();
+    if (start_time.get('minute') > 30) {
+      start_time.add(1, 'hours');
+      start_time.minutes(0);
+    }
+    else {
+      start_time.minutes(0);
+      start_time.add(30, 'minutes');
+    }
+    let end_time = start_time.clone().add(1, 'hours');
 
     const newEvent = {
       id: eventId,
-      title: $("#eventTitle")[0].value,
-      location: $("#eventLocation")[0].value,
-      start: moment.utc($("#eventStart")[0].value, "YYYY-MM-DD hh:mm:ss a"),
-      end: moment.utc($("#eventEnd")[0].value, "YYYY-MM-DD hh:mm:ss a"),
+      title: "meeting",
+      location: "",
+      start: start_time,
+      end: end_time,
       repeats: [false, false, false, false, false, false, false, false, false],
       names: [],
-      // repeats: $("#eventRepeats")[0].value,
-      // names: $("#eventNames")[0].value,
     };
 
     // clear fields
@@ -145,8 +146,6 @@ class App {
     this.Game.currentState.push(newEvent);
     this.Game.update();
 
-    console.log("after update:");
-    console.log(this.Game.currentState);
   }
 
   enter() {
@@ -154,13 +153,11 @@ class App {
       this.submitStruct();
       return;
     }
-    if (this.defineState) {
+    if (this.rephraseState) {
 
-      this.Game.enter(this.defineElem.value);
-        
-        const rephraseHeader = document.getElementById(configs.elems.rephraseHeader);
-        rephraseHeader.innerHTML = "Showing new results for this";
-        this.closeRephraseInterface();
+      this.Game.rephrase(this.defineElem.value);
+      document.getElementById(configs.elems.rephraseHeader).innerHTML = "Showing new results for this";
+      this.closeRephraseInterface();
       //   this.defineState = false;
       //   this.defineElem.value = "";
       //   this.Setting.closeDefineInterface();
@@ -212,7 +209,7 @@ class App {
 
   openRephraseInterface() {
     if (this.Setting.openRephraseInterface(this.Game.query, this.Game.responses.length > 0, this.Game.taggedCover, this.Game)) {
-      this.defineState = true;
+      this.rephraseState = true;
     }
   }
 
@@ -230,9 +227,9 @@ class App {
   }
 
   closeRephraseInterface() {
-    this.Setting.closeRephraseInterface();
+    this.Setting.closeRephraseInterface(this.Game);
     this.Game.defineSuccess = "";
-    this.defineState = false;
+    this.rephraseState = false;
   }
 
   toggleDefineInterface() {
@@ -543,7 +540,8 @@ window.onkeydown = (e) => {
       break;
     case Hotkeys.SHIFTENTER:
       e.preventDefault();
-      if (A.defineState) { A.submitCalendar(); break; }
+      // if (A.defineState) { A.submitCalendar(); break; }
+      if (A.rephraseState) { A.submitCalendar(); break; }
       A.accept();
       break;
     case Hotkeys.ENTER:
@@ -565,6 +563,8 @@ window.onkeydown = (e) => {
         A.toggleStructures();
       } else if (A.defineState) {
         A.closeDefineInterface();
+      } else if (A.rephraseState) {
+        A.closeRephraseInterface();
       }
       break;
     case Hotkeys.UNDO:
@@ -579,23 +579,36 @@ window.onkeydown = (e) => {
   }
 };
 
+function toggleCard() {
+  // document.getElementById("event-fields").style.visibility = "none";
+  // document.getElementById("eventTitle").type = "hidden";
+  // document.getElementById("eventLocation").type = "hidden";
+  // document.getElementById("eventStart").type = "hidden";
+  // document.getElementById("eventEnd").type = "hidden";
+  // document.getElementById("eventRepeats").type = "hidden";
+  // document.getElementById("eventNames").type = "hidden";
+}
+
 $(document).click(function(event) { 
     if(!$(event.target).closest('#mycalendar').length) {
       if(!$(event.target).closest('#eventDialog').length) {
-        document.getElementById("cardHeader").innerHTML = 'Add Event';
-        $("#updateDiv").hide();
-        $("#deleteDiv").hide();
-        $("#createDiv").show();
-        document.getElementById("eventId").value = null;
-        document.getElementById("eventTitle").value = null;
-        document.getElementById("eventLocation").value = null;
-        document.getElementById("eventStart").value = null;
-        document.getElementById("eventEnd").value = null;
-        document.getElementById("eventRepeats").value = null;
-        document.getElementById("eventNames").value = null;
-          // if($('#mycalendar').is(":visible")) {
-              // $('#mycalendar').hide();
-          // }
+        if(!$(event.target).closest('.pika-lendar').length) {
+          document.getElementById("cardHeader").innerHTML = 'Add Event';
+          $("#editDiv").hide();
+          $("#createDiv").show();
+          $('#eventDialog').css("height","100px");
+          toggleCard();
+          document.getElementById("eventId").value = null;
+          document.getElementById("eventTitle").value = null;
+          document.getElementById("eventLocation").value = null;
+          document.getElementById("eventStart").value = null;
+          document.getElementById("eventEnd").value = null;
+          document.getElementById("eventRepeats").value = null;
+          document.getElementById("eventNames").value = null;
+            // if($('#mycalendar').is(":visible")) {
+                // $('#mycalendar').hide();
+            // }
+        }
       }
     }        
 })
@@ -619,13 +632,13 @@ $(document).ready(function () {
       document.getElementById("eventId").value = event.id;
       document.getElementById("eventTitle").value = event.title;
       document.getElementById("eventLocation").value = event.location;
-      document.getElementById("eventStart").value = moment.utc(event.start).format("YYYY-MM-DD hh:mm:ss a");
-      document.getElementById("eventEnd").value = moment.utc(event.end).format("YYYY-MM-DD hh:mm:ss a");
+      document.getElementById("eventStart").value = moment.utc(event.start).format("YYYY-MM-DD hh:mm a");
+      document.getElementById("eventEnd").value = moment.utc(event.end).format("YYYY-MM-DD hh:mm a");
       document.getElementById("eventRepeats").value = event.repeats;
       document.getElementById("eventNames").value = event.names;
-      $("#updateDiv").show();
-      $("#deleteDiv").show();
+      $("#editDiv").show();
       $("#createDiv").hide();
+      $('#eventDialog').css("height","320px");
       document.getElementById("cardHeader").innerHTML = 'Edit/Delete Event';
     },
 
@@ -633,8 +646,8 @@ $(document).ready(function () {
       document.getElementById("eventId").value = event.id;
       document.getElementById("eventTitle").value = event.title;
       document.getElementById("eventLocation").value = event.location;
-      document.getElementById("eventStart").value = moment.utc(event.start).format("YYYY-MM-DD hh:mm:ss a");
-      document.getElementById("eventEnd").value = moment.utc(event.end).format("YYYY-MM-DD hh:mm:ss a");
+      document.getElementById("eventStart").value = moment.utc(event.start).format("YYYY-MM-DD hh:mm a");
+      document.getElementById("eventEnd").value = moment.utc(event.end).format("YYYY-MM-DD hh:mm a");
       document.getElementById("eventRepeats").value = event.repeats;
       document.getElementById("eventNames").value = event.names;
 
@@ -649,8 +662,8 @@ $(document).ready(function () {
       document.getElementById("eventId").value = event.id;
       document.getElementById("eventTitle").value = event.title;
       document.getElementById("eventLocation").value = event.location;
-      document.getElementById("eventStart").value = moment.utc(event.start).format('YYYY-MM-DD hh:mm:ss a');
-      document.getElementById("eventEnd").value = moment.utc(event.end).format('YYYY-MM-DD hh:mm:ss a');
+      document.getElementById("eventStart").value = moment.utc(event.start).format('YYYY-MM-DD hh:mm a');
+      document.getElementById("eventEnd").value = moment.utc(event.end).format('YYYY-MM-DD hh:mm a');
       document.getElementById("eventRepeats").value = event.repeats;
       document.getElementById("eventNames").value = event.names;
       if (A.Game.currentStateEditable == true) {
@@ -662,11 +675,17 @@ $(document).ready(function () {
 
     eventRender(event, element) {
       element.find(".fc-title").append("<br/>" + event.location);
+      
       element.bind('dblclick', function() {
         // can select event only if in TEACH mode
         if (A.Game.currentStateEditable == true) {
-          A.Game.currentState[event.id].names.push("S");
-          A.Game.update();
+          if (document.getElementById("eventNames").value.indexOf("S") > -1) {
+            document.getElementById("eventNames").value = null;
+          }
+          else {
+            document.getElementById("eventNames").value = JSON.stringify("S"); 
+          }
+          A.updateEvent();
         }
       });
     },
@@ -678,6 +697,6 @@ $(document).ready(function () {
   document.getElementById("createEvent").addEventListener("click", () => A.createEvent(), false);
   document.getElementById("deleteEvent").addEventListener("click", () => A.deleteEvent(), false);
 
-  const Picker_start = new Pikaday({ field: $("#eventStart")[0], format: "YYYY-MM-DD hh:mm:ss a" });
-  const Picker_end = new Pikaday({ field: $("#eventEnd")[0], format: "YYYY-MM-DD hh:mm:ss a" });
+  const Picker_start = new Pikaday({ field: $("#eventStart")[0], format: "YYYY-MM-DD hh:mm a" });
+  const Picker_end = new Pikaday({ field: $("#eventEnd")[0], format: "YYYY-MM-DD hh:mm a" });
 });

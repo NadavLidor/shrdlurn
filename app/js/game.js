@@ -51,9 +51,71 @@ export default class Game {
   //   this.Setting.renderTarget(this.targetStruct);
   // }
 
+  rephrase(query) {
+    if (query.length === 0) {
+      this.Setting.status("try rephrasing or esc");
+      return;
+    }
+    this.rephraseSempre(query);
+  }
+
+  rephraseSempre(querystr) {
+    const query = this.Sempre.formatQuery(querystr);
+    var contextCommand = "(context)";
+    if (this.currentState) {
+      // const currentState = JSON.stringify(JSON.stringify(this.currentState.map(c => ([c.x, c.y, c.z, c.color, c.names]))));
+      const currentState = JSON.stringify(JSON.stringify(this.currentState.map(c => ([
+        c.title, 
+        c.location, //TODO here!!!!!!
+        c.start.format('YYYY-MM-DDTHH:mm'), 
+        c.end.format('YYYY-MM-DDTHH:mm'), 
+        c.repeats,
+        c.names
+        ]))));
+      contextCommand = `(context (graph NaiveKnowledgeGraph ((string ${currentState}) (name b) (name c))))`;
+    }
+
+    const contextCmds = { q: contextCommand, sessionId: this.sessionId };
+
+    this.Sempre.query(contextCmds, () => {
+      const cmds = { q: query, sessionId: this.sessionId };
+      this.Sempre.query(cmds, (response) => {
+        this.taggedCover = response.taggedcover;
+
+        const formval = this.Sempre.parseSEMPRE(response.candidates);
+        if (formval === null || formval === undefined) {
+          console.log("no answer from sempre");
+          this.resetResponses();
+          this.query = query;
+          this.Setting.status("CADLURN did not understand", query);
+          this.Setting.promptDefine();
+          this.Setting.promptRephrase();
+          this.Logger.log({ type: "queryUnknown", msg: { query: query } });
+          this.Setting.promptAccept();
+        } else {
+          this.Setting.removePromptDefine();
+          this.responses = formval;
+          this.selectedResp = 0;
+          this.query = query;
+          this.Setting.status(`got ${this.responses.length} options, use &darr; and &uarr; to scroll, and accept to confirm.`, `${query} (#1/${this.responses.length})`, this.responses[0].maxprop | -1);
+          this.Logger.log({ type: "query", msg: { query: query } });
+          this.Setting.promptAccept();
+        }
+
+        if (configs.debugMode) {
+          console.log(response);
+        }
+
+        this.update();
+      });
+    });
+  }
+
+
+
+
   enter(query) {
     if (query.length === 0) {
-      // TODO: Validate length!
       this.Setting.status("");
       return;
     }
@@ -130,38 +192,7 @@ export default class Game {
     
     const contextCmds = { q: contextCommand, sessionId: this.sessionId };
 
-    this.Sempre.query(contextCmds, () => {
-      // const cmds = { q: query, sessionId: this.sessionId };
-      // this.Sempre.query(cmds, (response) => {
-      //   this.taggedCover = response.taggedcover;
-
-      //   const formval = this.Sempre.parseSEMPRE(response.candidates);
-      //   if (formval === null || formval === undefined) {
-      //     console.log("no answer from sempre");
-      //     this.resetResponses();
-      //     this.query = query;
-      //     this.Setting.status("SHRDLURN did not understand", query);
-      //     this.Setting.promptDefine();
-      //     this.Setting.promptRephrase();
-      //     this.Logger.log({ type: "queryUnknown", msg: { query: query } });
-      //     this.Setting.promptAccept();
-      //   } else {
-      //     this.Setting.removePromptDefine();
-      //     this.responses = formval;
-      //     this.selectedResp = 0;
-      //     this.query = query;
-      //     this.Setting.status(`got ${this.responses.length} options, use &darr; and &uarr; to scroll, and accept to confirm.`, `${query} (#1/${this.responses.length})`, this.responses[0].maxprop | -1);
-      //     this.Logger.log({ type: "query", msg: { query: query } });
-      //     this.Setting.promptAccept();
-      //   }
-
-      //   if (configs.debugMode) {
-      //     console.log(response);
-      //   }
-
-      //   this.update();
-      // });
-    });
+    this.Sempre.query(contextCmds, () => {});
   }
 
   accept() {
@@ -217,13 +248,17 @@ export default class Game {
   update() {
 
     /* Update the canvas */
-    let afterStruct = this.currentState;
+
+    let state = this.currentState;
+    // let previousState = this.currentState;
+    // let newState = [];
     if (this.responses.length > 0) {
-      afterStruct = this.responses[this.selectedResp].value;
+      // newState = this.responses[this.selectedResp].value;
+      state = this.responses[this.selectedResp].value;
       console.log("formula: " + this.responses[this.selectedResp].formula);
     }
-    console.log("afterStruct: " + afterStruct);
-    this.Setting.renderCanvas(afterStruct);
+    // this.Setting.renderCanvas(previousState, newState);
+    this.Setting.renderCanvas(state);
 
     /* Update the history */
     this.Setting.renderHistory(this.history);
@@ -319,7 +354,9 @@ export default class Game {
     } 
 
     else if (!document.getElementById(configs.elems.definePrompt).classList.contains("hidden")) {
+      this.Setting.removePromptRephrase();
       this.Setting.removePromptDefine();
+      this.Setting.status("↑: showing the previous one", `${this.query} (#${this.selectedResp + 1}/${this.responses.length})`, this.responses[0].maxprop | -1);
     }
 
     else if (this.selectedResp !== 0) {

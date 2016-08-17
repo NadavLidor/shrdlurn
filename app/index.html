@@ -127,25 +127,23 @@
             <div class="card-header" id="cardHeader">
               Add Event
             </div>
-            <div class="event-form">
-                <input type="hidden" id="eventId">
-                <input type="hidden" id="eventRepeats">
-                <input type="hidden" id="eventNames">
-                <input type="text" id="eventTitle" placeholder="event name">
-                <input type="text" id="eventLocation" placeholder="location">
-                <input type="text" id="eventStart" data-field="datetime" placeholder="start time">
-                <input type="text" id="eventEnd" data-field="datetime" placeholder="end time">
-            </div>
-            <div class="target-footer">
-              <div id="updateDiv">
-                <button type="button" class="enter-button" id="updateEvent">update event</button>
+            <div id="editDiv">
+              <div class="event-form">
+                  <input type="hidden" id="eventId">
+                  <input type="hidden" id="eventRepeats">
+                  <input type="hidden" id="eventNames">
+                  <input type="text" id="eventTitle" placeholder="event title">
+                  <input type="text" id="eventLocation" placeholder="location">
+                  <input type="text" id="eventStart" data-field="datetime" placeholder="start time">
+                  <input type="text" id="eventEnd" data-field="datetime" placeholder="end time">
               </div>
-              <div id="createDiv">
-                <button type="button" class="enter-button" id="createEvent">new event</button>
-              </div>
-              <div id="deleteDiv">
+              <div class="target-footer">
+                <button type="button" class="enter-button" id="updateEvent">update</button>
                 <button type="button" class="enter-button" id="deleteEvent">delete</button>
               </div>
+            </div>
+            <div class="target-footer" id="createDiv">
+              <button type="button" class="enter-button" id="createEvent">new event</button>
             </div>
           </form>
         </div>
