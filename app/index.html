@@ -20,9 +20,9 @@
         <span class="sublogo">A Stanford NLP Project</span>
       </div>
       <div class="nav">
-        <div class="help-toggle">Help Me</div>
+        <!-- <div class="help-toggle">Help Me</div> -->
         <div class="keyboard-toggle">Keyboard Shortcuts</div>
-        <div class="hidden">Restart Tutorial</div>
+        <div class="hidden" id="restart_tutorial">Restart Tutorial</div>
       </div>
     </div>
     <div class="container">
@@ -34,7 +34,6 @@
           <p>Help CADLURN learn by making the necessary changes on the calendar.</p>
           <button type="button" class="bold-button" id="define_instead">Ok. TEACH CADLURN.</button>
         </div>
-
 
         <div class="define-area" id="define_interface">
           <div class="status">
@@ -234,7 +233,7 @@
             Keyboard Shortcuts
           </div>
           <div class="modal-body">
-            <p>To make your life easier, we made the follow keyboard shortcuts so that you can rapidly build with SHRDLURN!</p>
+            <p>To make your life easier, we made the follow keyboard shortcuts so that you can rapidly work with CADLURN!</p>
             <p>
               <strong>enter:</strong> enter (try)<br />
               <strong>accept:</strong> shift-enter (✓)<br />
@@ -244,7 +243,7 @@
               <strong>undo:</strong> ctrl-z<br />
               <strong>redo:</strong> shift-ctrl-z
             </p>
-            <p><a href="" class="keyboard-toggle">Got it? Great. Click to close this now (or press esc).</a></p>
+            <p><a href="" class="keyboard-toggle">Click to close window (or press esc).</a></p>
           </div>
         </div>
       </div>
@@ -256,6 +255,108 @@
           <div class="modal-body">
             <p>Below are a collection of user-submitted structures. Click on one to load it. Or <a href="" class="structures-toggle">click here or press ESC to close this dialog.</a></p>
             <ul id="user_structs"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-container active" id="welcome">
+        <div class="modal">
+          <div class="modal-header">
+            Welcome to CADLURN!
+          </div>
+          <div class="modal-body">
+            <p>
+              CADLURN is a Stanford research project to teach computers to understand English.
+            </p>
+            <p>
+              We need your help!
+            </p>
+            <button class="bold-button" id="start_button">Click to Get Started</button>
+            <img src="img/RedCalendar.png" />
+          </div>
+        </div>
+      </div>
+      <div class="tutorials">
+        <div id="tutorial-1" class="tutorial">
+          <div class="tutorial-header">
+            Tutorial
+          </div>
+          <div class="tutorial-body">
+            <p>CADLURN is an attempt to see how well computers can be taught to learn English. CADLURN knows no English at first, but together we'll teach it!</p>
+            <p>Your task? Very simple - play around with the calendar as if it is your own - move, add, edit and remove meetings as much as you want.</p>
+            <button class="next-tutorial">Next</button>
+          </div>
+          <a href="#" class="skip-tutorial">skip tutorial</a>
+        </div>
+        <div id="tutorial-2" class="tutorial">
+          <div class="tutorial-header">
+            How?
+          </div>
+          <div class="tutorial-body">
+              <p>By using language! 3 simple steps: </p>
+              <p>First, type in a command you want CADLURN to perform. </p>
+              <p>Try it out by writing <code>add new meeting tomorrow at 5 pm</code> in the white bar to the left and click try (or hit ENTER).</p>
+              <p>Click next after you click try.</p>
+            <button class="prev-tutorial">Previous</button> <button class="next-tutorial bold-button">Next</button>
+          </div>
+          <a href="#" class="skip-tutorial">skip tutorial</a>
+        </div>
+        <div id="tutorial-3" class="tutorial">
+          <div class="tutorial-header">
+            Select Correct Response
+          </div>
+          <div class="tutorial-body">
+            <p> CADLURN now offers multiple options. By using your keyboard UP and DOWN keys, scroll through the options. When you find the correct option, click <b>accept</b> or hit shift-enter to tell CADLURN that this option is the correct one. </p>
+            <p>Try it! Scroll UP and DOWN and <b>accept</b> to teach CADLURN.</p>
+            <button class="prev-tutorial">Previous</button> <button class="next-tutorial bold-button">Next</button>
+          </div>
+          <a href="#" class="skip-tutorial">skip tutorial</a>
+        </div>
+        <div id="tutorial-4" class="tutorial">
+          <div class="tutorial-header">
+            Last Step
+          </div>
+          <div class="tutorial-body">
+            <p>Sometimes CADLURN just doesn't get it. If CADLURN did not offer a good option, simply show what you meant. After scrolling down through all options, press <b>teach CADLURN</b> to make  changes on the calendar itself.</p>
+            <p>Drag and drop the events, or click any event to edit its details.</p>
+            <button class="prev-tutorial">Previous</button> <button class="next-tutorial bold-button">Next</button>
+          </div>
+          <a href="#" class="skip-tutorial">skip tutorial</a>
+        </div>
+        <div id="tutorial-5" class="tutorial">
+          <div class="tutorial-header">
+            Be Careful
+          </div>
+          <div class="tutorial-body">
+            <ol>
+              <li> Make sure to check if CADLURN offered a good option first. Only if none of the options are correct make the changes yourself. </li>
+              <li> Be precise. Make sure your command and the corresponding calendar state match. Otherwise CADLURN gets confused.</li>
+              <li> The current day and time is shown on the calendar (red line). It is not necessarily your local time. </li>
+            <button class="prev-tutorial">Previous</button> <button class="next-tutorial bold-button">Next</button>
+          </div>
+          <a href="#" class="skip-tutorial">skip tutorial</a>
+        </div>
+        <div id="tutorial-6" class="tutorial">
+          <div class="tutorial-header">
+            What can CADLURN do?
+          </div>
+          <div class="tutorial-body">
+              <p>CADLURN is simple, and supports adding, removing and editing events. Every event has a title and a location.</p>
+              <p>When referring to a title or a location, make sure to use quotation marks. For example, type <code> cancel my "Dinner" </code> or <code> add "Kids Dinner" at "KFC" </code>
+              </p>
+            <button class="prev-tutorial">Previous</button> <button class="next-tutorial bold-button">Next</button>
+          </div>
+          <a href="#" class="skip-tutorial">skip tutorial</a>
+        </div>
+        <div id="tutorial-7" class="tutorial">
+          <div class="tutorial-header">All done!</div>
+          <div class="tutorial-body">
+            <p>Congratulations! You have successfully completed the tutorial.</p>
+            <!-- <p>Now we will ask you to build a target structure in a maximum number of steps. Try to use as natural as language as possible to instruct the computer. When the computer doesn't understand, click the "define" button to teach the computer what you mean using its simple, basic language!</p> -->
+            <!-- <p>So, go out and try to build the target structure on the top right using language, teaching the computer and defining new things!</p> -->
+            <p>Start playing and teaching CADLURN. Good luck!</p>
+            <!-- <p>Hint: Be sure to check out the "help me" for examples.</p> -->
+            <button class="next-tutorial">Finish</button>
           </div>
         </div>
       </div>

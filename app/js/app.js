@@ -4,7 +4,7 @@ import Game from "./game";
 import configs from "./config";
 import Setting from "./setting";
 import Sempre from "./sempre";
-import { getHistoryElems, resetStore } from "./util";
+import { getHistoryElems, resetStore, getStore, setStore } from "./util";
 
 import Pikaday from "pikaday-time";
 // import Pikaday from "pikaday";
@@ -25,6 +25,8 @@ class App {
     this.structuresOn = false;
     this.watchOutForDefine = false;
     this.submitOn = false;
+    this.tutorial = !getStore("completed_tutorial", false);
+    this.tutorialStep = 1;
     // this.eventToUpdate = null; TODO
 
     this.updateRandomUtterances();
@@ -455,6 +457,52 @@ class App {
       this.closeSubmit();
     });
   }
+
+  start() {
+    document.getElementById(configs.elems.welcome).classList.remove("active");
+    if (this.tutorial) this.openTutorial();
+  }
+
+  openTutorial() {
+    document.getElementById("tutorial-1").classList.add("active");
+    this.Game.Logger.log({ type: "tutorial", msg: "start" });
+  }
+
+  nextTutorial() {
+    document.getElementById(`tutorial-${this.tutorialStep}`).classList.remove("active");
+    this.tutorialStep++;
+    const nextTutorial = document.getElementById(`tutorial-${this.tutorialStep}`);
+    if (nextTutorial) {
+      nextTutorial.classList.add("active");
+    } else {
+      this.endTutorial();
+      this.clear();
+    }
+  }
+
+  endTutorial() {
+    setStore("completed_tutorial", true);
+    this.tutorial = false;
+    this.Game.Logger.log({ type: "tutorial", msg: "end" });
+  }
+
+  restartTutorial() {
+    this.tutorial = true;
+    setStore("completed_tutorial", false);
+    this.tutorialStep = 1;
+    this.openTutorial();
+  }
+
+  prevTutorial() {
+    document.getElementById(`tutorial-${this.tutorialStep}`).classList.remove("active");
+    this.tutorialStep--;
+    document.getElementById(`tutorial-${this.tutorialStep}`).classList.add("active");
+  }
+
+  skipTutorial() {
+    document.getElementById(`tutorial-${this.tutorialStep}`).classList.remove("active");
+    this.endTutorial();
+  }
 }
 
 const A = new App();
@@ -479,6 +527,25 @@ document.getElementById(configs.buttons.closeRephrase).addEventListener("click",
 document.getElementById(configs.buttons.submitButton).addEventListener("click", () => A.openSubmit());
 document.getElementById(configs.buttons.closeSubmit).addEventListener("click", () => A.closeSubmit());
 document.getElementById(configs.buttons.submitStructure).addEventListener("click", () => A.submitStruct());
+document.getElementById(configs.buttons.restartTutorial).addEventListener("click", () => A.restartTutorial());
+document.getElementById(configs.buttons.start).addEventListener("click", () => A.start());
+
+for (const dT of document.getElementsByClassName(configs.buttons.define_instead)) {
+  dT.addEventListener("click", (e) => { e.preventDefault(); A.openDefineInterface(); });
+}
+
+for (const nT of document.getElementsByClassName("next-tutorial")) {
+  nT.addEventListener("click", () => A.nextTutorial());
+}
+
+for (const nT of document.getElementsByClassName("prev-tutorial")) {
+  nT.addEventListener("click", () => A.prevTutorial());
+}
+
+for (const nT of document.getElementsByClassName("skip-tutorial")) {
+  nT.addEventListener("click", (e) => { e.preventDefault(); A.skipTutorial(); });
+}
+
 
 function openAndCloseSetter(selector, callback, callbackObj) {
   const buttons = document.querySelectorAll(selector);
@@ -627,7 +694,14 @@ $(document).ready(function () {
     timezone: "UTC",
     now: moment.utc(),
     nowIndicator: true,
+    businessHours: {
+    dow: [ 0, 1, 2, 3, 4, 5, 6], // (0=Sunday)
+    start: '7:00',
+    end: '20:00',
+    },
+    scrollTime: '07:00:00',
     events: [],
+    firstDay: 1,
     eventClick(event, jsEvent, view) {
       document.getElementById("eventId").value = event.id;
       document.getElementById("eventTitle").value = event.title;

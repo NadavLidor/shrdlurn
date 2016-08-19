@@ -52,6 +52,7 @@ configs.elems = {
   structures: "structures",
   submitInterface: "submit_interface",
   submitConsole: "submittextarea",
+  welcome: "welcome",
 };
 
 configs.buttons = {
@@ -75,6 +76,8 @@ configs.buttons = {
   submitButton: "submitbutton",
   submitStructure: "confirm_submit_structure",
   closeSubmit: "close_submit",
+  start: "start_button",
+  restartTutorial: "restart_tutorial",
 };
 
 configs.difficulty = 3;

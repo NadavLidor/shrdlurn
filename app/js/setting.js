@@ -102,7 +102,9 @@ export default class Setting {
         borderColor : (contains.call(e.names, "S") ? "#000066" : ""),
         // dow: [2],
       }
-    )))
+    )));
+
+    $('#mycalendar').fullCalendar( 'render' )
 
     // // add new events
     // $('#mycalendar').fullCalendar('addEventSource', previousState.map((e) => (

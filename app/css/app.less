@@ -2117,3 +2117,69 @@ http://nicolasgallagher.com/micro-clearfix-hack/
   margin: -15px auto 10px;
   display: block;
 }
+
+
+.tutorials {
+
+}
+
+.tutorial {
+  display: none;
+  width: 450px;
+  position: fixed;
+  z-index: 999999;
+  right: 0;
+  height: 100%;
+  background-color: #FFF;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15),
+              0 3px 5px rgba(0,0,0,0.08);
+
+  &.active {
+    display: block;
+  }
+}
+
+.tutorial-header,
+.tutorial-body {
+  padding: 20px;
+}
+
+.tutorial-header {
+  font-size: 3.2rem;
+  font-weight: 900;
+  border-bottom: 1px solid rgba(60, 60, 60, 0.2);
+}
+
+.tutorial-body {
+  font-size: 1.8rem;
+}
+
+#welcome > div {
+  position: relative;
+  overflow-y: hidden;
+
+  & > .modal-body {
+    width:50%;
+    font-size:1.8rem;
+  }
+
+  & img {
+    position:absolute;
+    width: 500px;
+    top: 100px;
+    right: -25px;
+  }
+}
+
+.skip-tutorial {
+  position: fixed;
+  bottom: 10px;
+  right: 20px;
+  font-size: 1.4rem;
+}
+
+code {
+  background-color: @bgColor;
+  padding: 5px 9px;
+}
+

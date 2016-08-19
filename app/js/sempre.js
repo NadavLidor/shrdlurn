@@ -205,7 +205,7 @@ export default class SempreClient {
   formatQuery(ques) {
     const sanity = ques.replace(/(\+|-|%|;)/g, " $1 ")
                        .replace(/(\(|\))/g, "") // disables commands
-                       .replace(/"/g, "")
+                       // .replace(/"/g, "") //for quotes
                        .replace(/=/g, "= ")
                        .replace(/(>|<)/g, " $1")
                        .replace(/(>|<)(?!=)/g, "$1 ")
@@ -221,7 +221,8 @@ export default class SempreClient {
     for (const k in cmds) {
       cmdstr.push(`${k}=${encodeURIComponent(cmds[k])}`);
     }
-
+    console.log("queryyyyyy");
+    console.log(cmdstr.join("&"));
     fetch(`${configs.SEMPRE_URL}/sempre?format=lisp2json&${cmdstr.join("&")}`)
       .then((response) => response.json())
       .then((json) => callback(json))
