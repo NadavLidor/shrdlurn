@@ -47,8 +47,8 @@ export default class SempreClient {
   formatValue(value) {
     if (typeof value === "undefined") return "";
 
-    console.log("sempre: value");
-    console.log(value);
+    // console.log("sempre: value");
+    // console.log(value);
 
     const valueArray = JSON.parse(value);
 
@@ -62,8 +62,8 @@ export default class SempreClient {
         location: c[1],
         start: moment.utc(c[2]),
         end: moment.utc(c[3]),
-        repeats: c[4],
-        names: c[5],
+        // repeats: c[4], //CHANGE TO 5!!!
+        names: c[4],
       }
     ));
 
@@ -221,8 +221,6 @@ export default class SempreClient {
     for (const k in cmds) {
       cmdstr.push(`${k}=${encodeURIComponent(cmds[k])}`);
     }
-    console.log("queryyyyyy");
-    console.log(cmdstr.join("&"));
     fetch(`${configs.SEMPRE_URL}/sempre?format=lisp2json&${cmdstr.join("&")}`)
       .then((response) => response.json())
       .then((json) => callback(json))

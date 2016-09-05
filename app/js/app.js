@@ -27,23 +27,11 @@ class App {
     this.submitOn = false;
     this.tutorial = !getStore("completed_tutorial", false);
     this.tutorialStep = 1;
-    // this.eventToUpdate = null; TODO
-
     this.updateRandomUtterances();
-
-    // this.generateTarget();
-
     this.consoleElem.focus();
   }
 
-  // generateTarget() {
-  //   /* Generate Target at Random */
-  //   this.Game.setTarget(this.Game.getRandomTarget());
-  //   this.setupAutocomplete();
-  // }
-
   submitCalendar() {
-    console.log("submitCalendar");
     this.Game.submitCalendar();
     this.closeDefineInterface();
   }
@@ -52,32 +40,22 @@ class App {
     if ($("#eventId")[0].value == -1) return;
     if (A.Game.currentStateEditable === false) return;
 
-    console.log("before update:");
-    console.log(this.Game.currentState);
-    console.log($("#eventNames")[0].value);
-
     const newEvent = {
       id: $("#eventId")[0].value,
       title: $("#eventTitle")[0].value,
       location: $("#eventLocation")[0].value,
       start: moment.utc($("#eventStart")[0].value, 'YYYY-MM-DD hh:mm a'),
       end: moment.utc($("#eventEnd")[0].value, 'YYYY-MM-DD hh:mm a'),
-      repeats: JSON.parse("[" + $("#eventRepeats")[0].value + "]"),
+      // repeats: JSON.parse("[" + $("#eventRepeats")[0].value + "]"),
       names: JSON.parse("[" + JSON.stringify($("#eventNames")[0].value) + "]"),
     }
-
-    // this.Game.currentState = [newEvent,newEvent,newEvent];
 
     for (let i = 0; i < this.Game.currentState.length; i++) {
       if (this.Game.currentState[i].id == newEvent.id) {
         this.Game.currentState[i] = newEvent;
       }
     }
-
     this.Game.update();
-
-    console.log("after update:");
-    console.log(this.Game.currentState);
   }
 
   deleteEvent() {
@@ -97,7 +75,7 @@ class App {
     document.getElementById("eventLocation").value = null;
     document.getElementById("eventStart").value = null;
     document.getElementById("eventEnd").value = null;
-    document.getElementById("eventRepeats").value = null;
+    // document.getElementById("eventRepeats").value = null;
     document.getElementById("eventNames").value = null;
 
     document.getElementById("cardHeader").innerHTML = 'Add Event';
@@ -115,7 +93,7 @@ class App {
     const stateLength = this.Game.currentState.length;
     if (stateLength > 0) { eventId = this.Game.currentState[stateLength - 1].id + 1; }
 
-    let start_time = moment.utc();
+    const start_time = moment.utc("2015-11-11T12:59:00");
     if (start_time.get('minute') > 30) {
       start_time.add(1, 'hours');
       start_time.minutes(0);
@@ -132,8 +110,8 @@ class App {
       location: "",
       start: start_time,
       end: end_time,
-      repeats: [false, false, false, false, false, false, false, false, false],
-      names: [],
+      // repeats: [false, false, false, false, false, false, false, false, false],
+      names: ['N'], //there's a bug if I add 'S' b/c of updateEvent.addEvent
     };
 
     // clear fields
@@ -142,7 +120,7 @@ class App {
     document.getElementById("eventLocation").value = null;
     document.getElementById("eventStart").value = null;
     document.getElementById("eventEnd").value = null;
-    document.getElementById("eventRepeats").value = null;
+    // document.getElementById("eventRepeats").value = null;
     document.getElementById("eventNames").value = null;
 
     this.Game.currentState.push(newEvent);
@@ -155,21 +133,20 @@ class App {
       this.submitStruct();
       return;
     }
-    if (this.rephraseState) {
+    // if (this.rephraseState) {
 
-      this.Game.rephrase(this.defineElem.value);
-      document.getElementById(configs.elems.rephraseHeader).innerHTML = "Showing new results for this";
-      this.closeRephraseInterface();
+    //   this.Game.rephrase(this.defineElem.value);
+    //   document.getElementById(configs.elems.rephraseHeader).innerHTML = "Showing new results for this";
+    //   this.closeRephraseInterface();
       //   this.defineState = false;
       //   this.defineElem.value = "";
       //   this.Setting.closeDefineInterface();
       //   this.consoleElem.value = defined;
       //   this.consoleElem.focus();
       // }
-
       // this.watchOutForDefine = true;
       // return;
-    }
+    // }
     if (this.activeHistoryElem > 0) {
       const historyElems = getHistoryElems();
       this.Game.history = this.Game.history.slice(0, historyElems.length - this.activeHistoryElem);
@@ -177,12 +154,11 @@ class App {
     }
 
     this.Game.enter(this.consoleElem.value);
-
-    // this.updateRandomUtterances();
+    this.updateRandomUtterances();
   }
 
   accept() {
-    this.Game.accept();
+    this.Game.accept(this.tutorial);
     this.consoleElem.value = "";
     this.consoleElem.focus();
     this.updateRandomUtterances();
@@ -205,6 +181,7 @@ class App {
 
   openDefineInterface() {
     if (this.Setting.openDefineInterface(this.Game.query, this.Game.responses.length > 0, this.Game.taggedCover, this.Game)) {
+      this.savedState = this.currentState;
       this.defineState = true;
     }
   }
@@ -353,7 +330,7 @@ class App {
                 location: c[1],
                 start: c[2],
                 end: c[3],
-                repeats: c[4],
+                // repeats: c[4],
                 names: c[5],
                 // x: c[0],
                 // y: c[1],
@@ -460,6 +437,7 @@ class App {
 
   start() {
     document.getElementById(configs.elems.welcome).classList.remove("active");
+    this.Setting.renderCanvas(configs.defaultStruct);
     if (this.tutorial) this.openTutorial();
   }
 
@@ -508,7 +486,7 @@ class App {
 const A = new App();
 
 /* Event Listeners */
-
+document.getElementById(configs.buttons.edit_calendar).addEventListener("click", (e) => { e.preventDefault(); A.openDefineInterface(); }, false);
 document.getElementById(configs.buttons.do).addEventListener("click", () => A.enter(), false);
 document.getElementById(configs.buttons.accept).addEventListener("click", () => A.accept(), false);
 document.getElementById(configs.buttons.prev).addEventListener("click", () => A.prev(), false);
@@ -519,7 +497,6 @@ document.getElementById(configs.consoleElemId).addEventListener("keyup", () => t
 document.getElementById(configs.buttons.define).addEventListener("click", () => A.enter(), false);
 document.getElementById(configs.buttons.tryDefine).addEventListener("click", () => { A.Game.defineSuccess = ""; A.enter(); }, false);
 document.getElementById(configs.buttons.define_instead).addEventListener("click", (e) => { e.preventDefault(); A.openDefineInterface(); }, false);
-document.getElementById(configs.buttons.rephrase_instead).addEventListener("click", (e) => { e.preventDefault(); A.openRephraseInterface(); }, false);
 document.getElementById(configs.buttons.putBack).addEventListener("click", () => A.putBack(), false);
 document.getElementById(configs.elems.defineConsole).addEventListener("keydown", (e) => A.defining(e), false);
 document.getElementById(configs.buttons.closeDefine).addEventListener("click", () => A.cancelDefine());
@@ -529,6 +506,7 @@ document.getElementById(configs.buttons.closeSubmit).addEventListener("click", (
 document.getElementById(configs.buttons.submitStructure).addEventListener("click", () => A.submitStruct());
 document.getElementById(configs.buttons.restartTutorial).addEventListener("click", () => A.restartTutorial());
 document.getElementById(configs.buttons.start).addEventListener("click", () => A.start());
+// document.getElementById(configs.buttons.rephrase_instead).addEventListener("click", (e) => { e.preventDefault(); A.openRephraseInterface(); }, false);
 
 for (const dT of document.getElementsByClassName(configs.buttons.define_instead)) {
   dT.addEventListener("click", (e) => { e.preventDefault(); A.openDefineInterface(); });
@@ -670,7 +648,7 @@ $(document).click(function(event) {
           document.getElementById("eventLocation").value = null;
           document.getElementById("eventStart").value = null;
           document.getElementById("eventEnd").value = null;
-          document.getElementById("eventRepeats").value = null;
+          // document.getElementById("eventRepeats").value = null;
           document.getElementById("eventNames").value = null;
             // if($('#mycalendar').is(":visible")) {
                 // $('#mycalendar').hide();
@@ -693,13 +671,14 @@ $(document).ready(function () {
     editable: true,
     timezone: "UTC",
     now: moment.utc(),
+    // now: moment.utc("2015-11-11T12:59:00"),
     nowIndicator: true,
     businessHours: {
-    dow: [ 0, 1, 2, 3, 4, 5, 6], // (0=Sunday)
-    start: '7:00',
-    end: '20:00',
+      dow: [ 0, 1, 2, 3, 4, 5, 6], // (0=Sunday)
+      start: '8:00',
+      end: '20:00',
     },
-    scrollTime: '07:00:00',
+    scrollTime: '08:00:00',
     events: [],
     firstDay: 1,
     eventClick(event, jsEvent, view) {
@@ -708,9 +687,10 @@ $(document).ready(function () {
       document.getElementById("eventLocation").value = event.location;
       document.getElementById("eventStart").value = moment.utc(event.start).format("YYYY-MM-DD hh:mm a");
       document.getElementById("eventEnd").value = moment.utc(event.end).format("YYYY-MM-DD hh:mm a");
-      document.getElementById("eventRepeats").value = event.repeats;
+      // document.getElementById("eventRepeats").value = event.repeats;
       document.getElementById("eventNames").value = event.names;
       $("#editDiv").show();
+      // $("#editDiv input").prop("disabled", true);
       $("#createDiv").hide();
       $('#eventDialog').css("height","320px");
       document.getElementById("cardHeader").innerHTML = 'Edit/Delete Event';
@@ -722,7 +702,7 @@ $(document).ready(function () {
       document.getElementById("eventLocation").value = event.location;
       document.getElementById("eventStart").value = moment.utc(event.start).format("YYYY-MM-DD hh:mm a");
       document.getElementById("eventEnd").value = moment.utc(event.end).format("YYYY-MM-DD hh:mm a");
-      document.getElementById("eventRepeats").value = event.repeats;
+      // document.getElementById("eventRepeats").value = event.repeats;
       document.getElementById("eventNames").value = event.names;
 
       if (A.Game.currentStateEditable == true) {
@@ -738,7 +718,7 @@ $(document).ready(function () {
       document.getElementById("eventLocation").value = event.location;
       document.getElementById("eventStart").value = moment.utc(event.start).format('YYYY-MM-DD hh:mm a');
       document.getElementById("eventEnd").value = moment.utc(event.end).format('YYYY-MM-DD hh:mm a');
-      document.getElementById("eventRepeats").value = event.repeats;
+      // document.getElementById("eventRepeats").value = event.repeats;
       document.getElementById("eventNames").value = event.names;
       if (A.Game.currentStateEditable == true) {
         A.updateEvent();
@@ -770,7 +750,6 @@ $(document).ready(function () {
   document.getElementById("updateEvent").addEventListener("click", () => A.updateEvent(), false);
   document.getElementById("createEvent").addEventListener("click", () => A.createEvent(), false);
   document.getElementById("deleteEvent").addEventListener("click", () => A.deleteEvent(), false);
-
   const Picker_start = new Pikaday({ field: $("#eventStart")[0], format: "YYYY-MM-DD hh:mm a" });
   const Picker_end = new Pikaday({ field: $("#eventEnd")[0], format: "YYYY-MM-DD hh:mm a" });
 });

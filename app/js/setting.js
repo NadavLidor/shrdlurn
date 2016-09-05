@@ -1,5 +1,5 @@
 import configs from "./config";
-import { getHistoryElems, emojione } from "./util";
+import { getHistoryElems, emojione, contains } from "./util";
 /* eslint-disable new-cap */
 
 export default class Setting {
@@ -12,13 +12,19 @@ export default class Setting {
     // pass
   }
 
-  renderCanvas(previousState, newState) {
-
-    this.renderCalendar(previousState, newState);
-
-    // this.renderGrid(this.iso);
-    // this.renderBlocks(this.iso, state);
+  renderCanvas(state) {
+    this.renderCalendar(state);
   }
+
+  // renderCanvas(previousState, newState) {
+  //   console.log("here");
+  //   this.renderCalendar(previousState, newState);
+
+  //   // this.renderGrid(this.iso);
+  //   // this.renderBlocks(this.iso, state);
+  // }
+
+
 
   renderUserCanvas(state, elemId) {
     const iso = new Isomer(document.getElementById(elemId));
@@ -83,8 +89,8 @@ export default class Setting {
   // renderCalendar(previousState, newState) {
   renderCalendar(state) {
 
-    console.log("setting renderCalendar: " + moment().format("YYYY-MM-DD hh:mm:ss"));
-    console.log(state);
+    // console.log("setting state");
+    // console.log(state);
 
     // remove all events
     $('#mycalendar').fullCalendar('removeEvents');
@@ -97,9 +103,10 @@ export default class Setting {
         start: e.start,
         end: e.end,
         location : e.location,
-        repeats : e.repeats,
+        // repeats : e.repeats,
         names : e.names,
-        borderColor : (contains.call(e.names, "S") ? "#000066" : ""),
+        // borderColor : (contains.call(e.names, "S") && !contains.call(e.names, "N") ? "red" : ""),
+        color : (contains.call(e.names, "N") ? "#00a0b0" : ""),
         // dow: [2],
       }
     )));
@@ -235,6 +242,30 @@ export default class Setting {
     });
   }
 
+  sortEvents(events) {
+    return events.sort((a, b) => {
+      if (a.start.isAfter(b.start)) {
+        return 1;
+      } else if (a.start.isBefore(b.start)) {
+        return -1;
+      }
+
+      if (a.end.isAfter(b.end)) {
+        return -1;
+      } else if (a.end.isBefore(b.end)) {
+        return 1;
+      }
+
+      if (a.title.length > b.title.length) {
+        return -1;
+      } else if (a.title.length < b.title.length) {
+        return 1;
+      }
+
+      return 0;
+    });
+  }
+
   stateIncludes(state, obj) {
     for (const c of state) {
       if (c.x === obj.x &&
@@ -259,15 +290,13 @@ export default class Setting {
     if (struct1 === struct2) return true;
     if (struct1 == null || struct2 == null) return false;
     if (struct1.length != struct2.length) return false;
-
-    const a = this.sortBlocks(struct1);
-    const b = this.sortBlocks(struct2);
-
+    const a = this.sortEvents(struct1);
+    const b = this.sortEvents(struct2);
     for (let i = 0; i < a.length; ++i) {
-      if (a[i].x !== b[i].x ||
-          b[i].y !== b[i].y ||
-          b[i].z !== b[i].z ||
-          b[i].color !== b[i].color) {
+      if (a[i].title !== b[i].title ||
+          b[i].location !== b[i].location ||
+          !b[i].start.isSame(b[i].start) ||
+          !b[i].end.isSame(b[i].end)) {
         return false;
       }
     }
@@ -338,8 +367,34 @@ export default class Setting {
     }
   }
 
+  unmarkNewEvents(Game) {
+    // remove New marks
+    for (var i = 0; i < Game.currentState.length; i++) {
+      if (Game.currentState[i].names.length > 0) {
+        if (contains.call(Game.currentState[i].names, "S")) {
+          Game.currentState[i].names = ["S"];
+        } else {
+          Game.currentState[i].names = [];
+        }
+      }
+    }
+  }
+
+  cursorLoading() {
+    $("body").css("cursor", "progress");
+  }
+
+  cursorNotLoading() {
+    $("body").css("cursor", "default");
+  }
+
   openDefineInterface(query, canAnswer, coverage, game) {
     
+    if (query.length === 0) {
+      this.status("nothing to define");
+      return false;
+    }
+
     game.currentStateEditable = true;
     $('#eventDialog')[0].classList.remove('hidden');
     game.responses = [];
@@ -350,25 +405,20 @@ export default class Setting {
     document.getElementById("eventLocation").value = null;
     document.getElementById("eventStart").value = null;
     document.getElementById("eventEnd").value = null;
-    document.getElementById("eventRepeats").value = null;
+    // document.getElementById("eventRepeats").value = null;
     document.getElementById("eventNames").value = null;
-
-    if (query.length === 0) {
-      this.status("nothing to define");
-      return false;
-    }
 
     const defineInterface = document.getElementById(configs.elems.defineInterface);
     defineInterface.classList.add("active");
 
     const defineStatus = document.getElementById(configs.elems.defineStatus);
-    defineStatus.innerHTML = `Show CADLURN what ${query} means.`;
+    defineStatus.innerHTML = `Show SCHEDLURN what ${query} means.`;
 
     const toggleButton = document.getElementById(configs.buttons.toggleDefine);
     toggleButton.innerHTML = "Return";
 
     this.removePromptDefine();
-    this.removePromptRephrase();
+    if (game.rephraseOption) {this.removePromptRephrase();}
 
     this.tryDefine(query, false, canAnswer, coverage);
 
@@ -399,6 +449,8 @@ export default class Setting {
     // revert changes to current state
     game.currentStateEditable = false;
 
+    this.removeAccept();
+
 
   }
 
@@ -418,7 +470,7 @@ export default class Setting {
     rephraseInterface.classList.add("active");
 
     const rephraseStatus = document.getElementById(configs.elems.rephraseStatus);
-    rephraseStatus.innerHTML = `Show CADLURN what ${query} means.`;
+    rephraseStatus.innerHTML = `Show SCHEDLURN what ${query} means.`;
 
     const toggleButton = document.getElementById(configs.buttons.toggleDefine);
     toggleButton.innerHTML = "Return";
@@ -457,20 +509,19 @@ export default class Setting {
 
   }
 
-
   tryDefine(query, refineDefine, canAnswer, coverage = [], commandResponse = [], oldQuery = "") {
     const defineHeader = document.getElementById(configs.elems.defineHeader);
     document.getElementById(configs.elems.definePrompt).classList.add("hidden");
     document.querySelector('#define_interface .input-group').classList.remove("accepting");
 
 
-    defineHeader.innerHTML = `Please teach CADLURN the meaning of "${this.intelHighlight(coverage)}" by changing the calendar. Click Submit when done.`;
+    defineHeader.innerHTML = `Please teach SCHEDLURN the meaning of "${this.intelHighlight(coverage)}" by changing the calendar. Click Submit when done.`;
 
     // if (!refineDefine) {
     //   if (canAnswer) {
     //     defineHeader.innerHTML = `Already understand ${query}, teach another meaning?`;
     //   } else {
-    //     defineHeader.innerHTML = `Didn't understand "${this.intelHighlight(coverage)}". Please teach CADLUN by changing the calendar.`;
+    //     defineHeader.innerHTML = `Didn't understand "${this.intelHighlight(coverage)}". Please teach SCHEDLURN by changing the calendar.`;
     //   }
     // } else {
     //   if (canAnswer) {
@@ -495,14 +546,14 @@ export default class Setting {
     // }
   }
 
-tryRephrase(query, refineDefine, canAnswer, coverage = [], commandResponse = [], oldQuery = "") {
+  tryRephrase(query, refineDefine, canAnswer, coverage = [], commandResponse = [], oldQuery = "") {
     const rephraseHeader = document.getElementById(configs.elems.rephraseHeader);
     document.getElementById(configs.elems.definePrompt).classList.add("hidden");
     document.querySelector('#define_interface .input-group').classList.remove("accepting");
     // rephraseHeader.innerHTML = `Already understand ${query}, teach another meaning TODO?`;
 
     rephraseHeader.innerHTML = `Please teach the meaning of "${this.intelHighlight(coverage)}" by rephrasing your statement. Click Rephrase when done.`;
-    // defineHeader.innerHTML = `Didn't understand "${this.intelHighlight(coverage)}". Please teach CADLUN by changing the calendar.`;
+    // defineHeader.innerHTML = `Didn't understand "${this.intelHighlight(coverage)}". Please teach SCHEDLURN by changing the calendar.`;
 
     // if (!refineDefine) {
     //   if (canAnswer) {
@@ -617,10 +668,23 @@ tryRephrase(query, refineDefine, canAnswer, coverage = [], commandResponse = [],
 
   promptAccept() {
     document.getElementById(configs.elems.consoleGroup).classList.add("accepting");
+    $("#edit_calendar").css("backgroundColor", "#00a0b0");
+    $("#edit_calendar").css("cursor", "pointer");
+    $("#dobutton").css("backgroundColor", "#969696");
+  }
+
+  promptSubtleAccept() {
+    document.getElementById(configs.elems.consoleGroup).classList.add("accepting");
+    $("#edit_calendar").css("backgroundColor", "#00a0b0");
+    $("#edit_calendar").css("cursor", "pointer");
+    $("#flyingaccept").css("backgroundColor", "#969696");
   }
 
   removeAccept() {
     document.getElementById(configs.elems.consoleGroup).classList.remove("accepting");
+    $("#edit_calendar").css("backgroundColor", "#969696");
+    $("#edit_calendar").css("cursor", "not-allowed");
+    $("#dobutton").css("backgroundColor", "#00a0b0");
   }
 
   promptTryDefine() {
@@ -636,29 +700,3 @@ tryRephrase(query, refineDefine, canAnswer, coverage = [], commandResponse = [],
   }
 }
 
-var contains = function(needle) {
-    // Per spec, the way to identify NaN is that it is not equal to itself
-    var findNaN = needle !== needle;
-    var indexOf;
-
-    if(!findNaN && typeof Array.prototype.indexOf === 'function') {
-        indexOf = Array.prototype.indexOf;
-    } else {
-        indexOf = function(needle) {
-            var i = -1, index = -1;
-
-            for(i = 0; i < this.length; i++) {
-                var item = this[i];
-
-                if((findNaN && item !== item) || item === needle) {
-                    index = i;
-                    break;
-                }
-            }
-
-            return index;
-        };
-    }
-
-    return indexOf.call(this, needle) > -1;
-};

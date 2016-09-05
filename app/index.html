@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="teach the computer English">
-    <title>CADLURN</title>
+    <title>SCHEDLURN</title>
 
     <!-- calendar stuff -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
@@ -16,11 +16,11 @@
   <body>
     <div class="header">
       <div class="logo">
-        <span>CADLURN</span>
+        <span>SCHEDLURN</span>
         <span class="sublogo">A Stanford NLP Project</span>
       </div>
       <div class="nav">
-        <!-- <div class="help-toggle">Help Me</div> -->
+        <div class="help-toggle">Help Me</div>
         <div class="keyboard-toggle">Keyboard Shortcuts</div>
         <div class="hidden" id="restart_tutorial">Restart Tutorial</div>
       </div>
@@ -29,10 +29,10 @@
       <div class="main">
         <div id="mycalendar"></div>
         <div id="define_prompt" class="canvas-prompt hidden">
-          <h1>CADLURN does not understand.</h1>
+          <h1>SCHEDLURN does not understand.</h1>
           <hr>
-          <p>Help CADLURN learn by making the necessary changes on the calendar.</p>
-          <button type="button" class="bold-button" id="define_instead">Ok. TEACH CADLURN.</button>
+          <p>Help SCHEDLURN learn by making the necessary changes on the calendar.</p>
+          <button type="button" class="bold-button" id="define_instead">Ok. TEACH SCHEDLURN.</button>
         </div>
 
         <div class="define-area" id="define_interface">
@@ -52,7 +52,8 @@
             </div>
           </div>
           <div class="examples">
-            <span id="define_status"></span>&nbsp;<a href="" class="help-toggle">But it doesn't work, I need help...</a>
+            <span id="define_status"></span>
+            &nbsp;<a href="" class="help-toggle">But it doesn't work, I need help...</a>
           </div>
         </div>
 
@@ -67,7 +68,7 @@
             <div class="input-group">
               <input type="text" id="definetextarea" />
               <div class="buttons-at-end">
-                <button type="hidden" class="enter-button" id="dobutton">rephrase</button>
+                <button type="hidden" class="enter-button" id="rephrase">rephrase</button> 
                 <!-- <button type="hidden" class="accept-button" id="define_phrase_button">define</button> -->
               </div>
             </div>
@@ -91,19 +92,21 @@
             </div>
           </div>
         </div>
-        <div class="console-area">
+
+        <div class="console-area" style="margin-top: 15px;">
+          <button type="button" id="edit_calendar">edit calendar</button>
           <div id="statusinfo" class="status">
             &nbsp; <span class="reaction" id="reaction"><img class="emojione" alt=":rolling_eyes:" src="http://cdn.jsdelivr.net/emojione/assets/png/1f644.png"></span>
             <div>
               <span id="currentcmd"><b>No command</b></span>, <span id="status">type one!</span>
-              <a class="hidden linky" id="rephrase_instead">rephrase?</a> 
+              <!-- <a class="hidden linky" id="rephrase_instead">or rephrase</a>  -->
             </div>
           </div>
           <div class="input-group" id="console_group">
-            <input type="text" id="console">
+            <input type="text" id="console" maxlength="80">
             <div class="buttons-at-end">
               <button type="button" class="remove-button" id="putbackbutton">&times;</button>
-              <button type="button" class="enter-button" id="dobutton">enter</button>
+              <button type="button" class="enter-button" id="dobutton">try</button>
               <button type="button" class="accept-button" id="flyingaccept">accept</button>
             </div>
           </div>
@@ -121,6 +124,11 @@
         </div>
       </div>
       <div class="panel">
+        <div class="target card">
+          <div class="card-header" id="points">
+            Points: 0
+          </div>
+        </div>
         <div id="eventDialog" class="event-dialog target card hidden">
           <form>
             <div class="card-header" id="cardHeader">
@@ -158,13 +166,21 @@
       <div class="modal-container" id="helpme">
         <div class="modal">
           <div class="modal-header">
-            Help for SHRDLURN (esc to close)
+            Help for SCHEDLURN (esc to close)
           </div>
           <div class="modal-body">
-            <p> The goal is to teach SHRDLURN (the computer) to understand more English. You have to define things in a way that can already be understood by SHRDLURN.
-              This includes anything that you or others have already taught it,
-              as well as the core language below, which it always understands:
+            <p> The goal is to teach SCHEDLURN (the computer) to understand more English. Here are a few tips:
               <ul>
+                <li> SCHEDLURN will do its best to infer what you meant, but sometimes you need to be explicit. For example, instead of typing <code>new meeting at 3</code> , try <code>new meeting at 3 pm today</code> .</li>
+                <li> Remember the current time is indicated by the red line on the calendar. So <code>next meeting</code> will be the first meeting after that line</li>
+                <li> Remember the current time is indicated by the red line on the calendar. So "next meeting" will be the first meeting after that line</li>
+                <li> Meetings that are selected are marked with a red border. You can use that to refer to them directly. For example, after creating an event, you can simply type <code>rename as "lunch"</code></li>
+                <li> Start with simple commands, get the hang of it, then get creative. Try to perform actions on multiple meetings at a time (<code>all meetings on Sunday</code>) or relative to one another</li>
+              </ul>
+            </p>
+
+<!-- 
+
                 <li><b>number: </b> 0, 1, 2, ..., 9, many</li>
                 <li><b>color: </b> red, cyan, brown, yellow, orange</li>
                 <li><b>action: </b> remove, add [color] </li>
@@ -223,7 +239,7 @@
               <li> Still, if nothing works, close the definition window and teach something else!</li>
             </ul>
             <p> English is hard for beginners, which is why we need your help teaching SHRDLURN!</p>
-            <a class="button--closed help-toggle" href="#" >Okay, got it! (click here or press ESC key to close this window)</a>
+            <a class="button--closed help-toggle" href="#" >Okay, got it! (click here or press ESC key to close this window)</a> -->
           </div>
         </div>
       </div>
@@ -233,7 +249,7 @@
             Keyboard Shortcuts
           </div>
           <div class="modal-body">
-            <p>To make your life easier, we made the follow keyboard shortcuts so that you can rapidly work with CADLURN!</p>
+            <p>To make your life easier, we made the follow keyboard shortcuts so that you can rapidly work with SCHEDLURN!</p>
             <p>
               <strong>enter:</strong> enter (try)<br />
               <strong>accept:</strong> shift-enter (✓)<br />
@@ -244,6 +260,16 @@
               <strong>redo:</strong> shift-ctrl-z
             </p>
             <p><a href="" class="keyboard-toggle">Click to close window (or press esc).</a></p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-container" id="turkcode">
+        <div class="modal">
+          <div class="modal-header">
+            TURK CODE
+          </div>
+          <div class="modal-body">
+            <p>Congratulations! You have successfully completed the task. Please copy this confirmation code and submit it to complete the hit: <pre id="finalturkcode">Yummy</pre></p>
           </div>
         </div>
       </div>
@@ -262,11 +288,11 @@
     <div class="modal-container active" id="welcome">
         <div class="modal">
           <div class="modal-header">
-            Welcome to CADLURN!
+            Welcome to SCHEDLURN!
           </div>
           <div class="modal-body">
             <p>
-              CADLURN is a Stanford research project to teach computers to understand English.
+              SCHEDLURN is a Stanford research project to teach computers to understand English.
             </p>
             <p>
               We need your help!
@@ -282,20 +308,20 @@
             Tutorial
           </div>
           <div class="tutorial-body">
-            <p>CADLURN is an attempt to see how well computers can be taught to learn English. CADLURN knows no English at first, but together we'll teach it!</p>
-            <p>Your task? Very simple - play around with the calendar as if it is your own - move, add, edit and remove meetings as much as you want.</p>
+            <p>SCHEDLURN is an attempt to see how well computers can to learn English. By interacting with the calendar, you will be teaching SCHEDLURN the meaning of different commands.</p>
+            <p>Your task is simple: Modify the calendar by typing in commands. Go ahead and get creative and create, modify and remove events. For each action you will get 1 point, and the game will end when you reach 10 points. You can only enter new commands, do not repeat commands in this tutorial or in the example query below the input field.</p>
+            <p>So how does this work? 3 simple steps. Press next for quick step-by-step instructions.</p>
             <button class="next-tutorial">Next</button>
           </div>
           <a href="#" class="skip-tutorial">skip tutorial</a>
         </div>
         <div id="tutorial-2" class="tutorial">
           <div class="tutorial-header">
-            How?
+            1. Enter a Command
           </div>
           <div class="tutorial-body">
-              <p>By using language! 3 simple steps: </p>
-              <p>First, type in a command you want CADLURN to perform. </p>
-              <p>Try it out by writing <code>add new meeting tomorrow at 5 pm</code> in the white bar to the left and click try (or hit ENTER).</p>
+              <p>First, type in a new command to modify the calendar. Each event has a title, a location and a start and an end time, so you can refer to any of these.</p>
+              <p>Try it out by writing <code>add "short meeting" tomorrow at 2 pm</code> in the white bar to the left and click try (or hit ENTER).</p>
               <p>Click next after you click try.</p>
             <button class="prev-tutorial">Previous</button> <button class="next-tutorial bold-button">Next</button>
           </div>
@@ -303,22 +329,22 @@
         </div>
         <div id="tutorial-3" class="tutorial">
           <div class="tutorial-header">
-            Select Correct Response
+            2. Select Correct Response
           </div>
           <div class="tutorial-body">
-            <p> CADLURN now offers multiple options. By using your keyboard UP and DOWN keys, scroll through the options. When you find the correct option, click <b>accept</b> or hit shift-enter to tell CADLURN that this option is the correct one. </p>
-            <p>Try it! Scroll UP and DOWN and <b>accept</b> to teach CADLURN.</p>
+            <p> SCHEDLURN now offers multiple options. By using your keyboard ↓ and ↑ keys, scroll through the options. When you find the correct option, click <b>accept</b> or hit shift-enter to tell SCHEDLURN that this option is what you meant. </p>
+            <p>Try it! Scroll down and <b>accept</b> the right option to teach SCHEDLURN.</p>
             <button class="prev-tutorial">Previous</button> <button class="next-tutorial bold-button">Next</button>
           </div>
           <a href="#" class="skip-tutorial">skip tutorial</a>
         </div>
         <div id="tutorial-4" class="tutorial">
           <div class="tutorial-header">
-            Last Step
+            3. Make Changes Manually
           </div>
           <div class="tutorial-body">
-            <p>Sometimes CADLURN just doesn't get it. If CADLURN did not offer a good option, simply show what you meant. After scrolling down through all options, press <b>teach CADLURN</b> to make  changes on the calendar itself.</p>
-            <p>Drag and drop the events, or click any event to edit its details.</p>
+            <p>Sometimes SCHEDLURN just doesn't get it. If none of the options match your intent, simply show by changing the calendar yourself. Click "edit calendar", and show what changes you meant. You can drag and drop events to change start and end times, or click the event to change its details or delete it on the pop-up interface on the right. Notice that the "add event" option will pop-up on the right as well.</p>
+            <p>Try it. Enter a command, click "try" and then "edit calendar".</p>
             <button class="prev-tutorial">Previous</button> <button class="next-tutorial bold-button">Next</button>
           </div>
           <a href="#" class="skip-tutorial">skip tutorial</a>
@@ -329,20 +355,21 @@
           </div>
           <div class="tutorial-body">
             <ol>
-              <li> Make sure to check if CADLURN offered a good option first. Only if none of the options are correct make the changes yourself. </li>
-              <li> Be precise. Make sure your command and the corresponding calendar state match. Otherwise CADLURN gets confused.</li>
-              <li> The current day and time is shown on the calendar (red line). It is not necessarily your local time. </li>
+              <li> Check if SCHEDLURN offered a good response before changing the calendar manually.</li>
+              <li> Be precise: your command and the corresponding calendar state should match, otherwise SCHEDLURN gets confused.</li>
+              <li> The current date and time of the calendar is November 11th, 1:00 pm, shown on the calendar by a red line. This is the point of reference for any time-relative commands (e.g. <code> next Wed. </code> or <code> today at 3 pm </code>)</li>
+              <li> SCHEDLURN sometimes takes a bit of time to think. <b>Do not hit ENTER or click "try" more than once</b>. If after 30 seconds you still did not get a reply, try a different input.</li>
             <button class="prev-tutorial">Previous</button> <button class="next-tutorial bold-button">Next</button>
           </div>
           <a href="#" class="skip-tutorial">skip tutorial</a>
         </div>
         <div id="tutorial-6" class="tutorial">
           <div class="tutorial-header">
-            What can CADLURN do?
+            What can SCHEDLURN do?
           </div>
           <div class="tutorial-body">
-              <p>CADLURN is simple, and supports adding, removing and editing events. Every event has a title and a location.</p>
-              <p>When referring to a title or a location, make sure to use quotation marks. For example, type <code> cancel my "Dinner" </code> or <code> add "Kids Dinner" at "KFC" </code>
+              <p>SCHEDLURN is simple, and supports adding, removing and editing events. Every event has a title and an optional location field.</p>
+              <p>When referring to a title or a location, <b>use quotation marks</b>. For example, type <code> cancel my "team lunch" </code> or <code> add "soccer" at "rosewood field" </code>.
               </p>
             <button class="prev-tutorial">Previous</button> <button class="next-tutorial bold-button">Next</button>
           </div>
@@ -354,7 +381,7 @@
             <p>Congratulations! You have successfully completed the tutorial.</p>
             <!-- <p>Now we will ask you to build a target structure in a maximum number of steps. Try to use as natural as language as possible to instruct the computer. When the computer doesn't understand, click the "define" button to teach the computer what you mean using its simple, basic language!</p> -->
             <!-- <p>So, go out and try to build the target structure on the top right using language, teaching the computer and defining new things!</p> -->
-            <p>Start playing and teaching CADLURN. Good luck!</p>
+            <p>Start entering your own commands and teaching SCHEDLURN. Good luck!</p>
             <!-- <p>Hint: Be sure to check out the "help me" for examples.</p> -->
             <button class="next-tutorial">Finish</button>
           </div>

@@ -7,10 +7,16 @@ export function getTurkId() {
   return configs.defaultSessionId;
 }
 
-export function getTurkCode(targetIdx, nSteps, state) {
+export function getTurkCode(score) {
   const mturkid = getTurkId();
-  const encodedData = window.btoa(unescape(encodeURIComponent(`${mturkid}:win:${targetIdx}:${nSteps}:${state.length}:Yummy`)));
+  const encodedData = window.btoa(unescape(encodeURIComponent(`${mturkid}:win:${score}:Yummy`)));
   return encodedData;
+}
+
+export function getTurkHit() {
+  const hitnum = getParameterByName("mhitid");
+  if (hitnum && hitnum < configs.targets.length) return hitnum;
+  return 0;
 }
 
 // var turk = {};
